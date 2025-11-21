@@ -73,7 +73,11 @@ def init_db():
     c.execute('''CREATE TABLE IF NOT EXISTS configuracion
                  (id INTEGER PRIMARY KEY,
                   balance_inicial REAL DEFAULT 0,
-                  primera_vez INTEGER DEFAULT 1)''')
+                  primera_vez INTEGER DEFAULT 1,
+                  vista_quincenal INTEGER DEFAULT 0,
+                  fecha_pago_1 INTEGER DEFAULT 15,
+                  fecha_pago_2 INTEGER DEFAULT 30,
+                  usuario_id INTEGER DEFAULT 1)''')
 
     # Tabla de ingresos recurrentes
     c.execute('''CREATE TABLE IF NOT EXISTS ingresos_recurrentes
