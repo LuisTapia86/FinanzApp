@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - FinanzApp</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root {
+            /* Paleta profesional y sobria */
+            --primary-gradient: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            --dark-bg: #0a0e1a;
+            --card-bg: rgba(15, 23, 42, 0.85);
+            --card-border: rgba(71, 85, 105, 0.4);
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+
+            /* Verde: fondos oscuros + texto claro */
+            --success: #047857;
+            --success-light: #059669;
+            --success-bg: rgba(6, 78, 59, 0.4);
+            --success-border: rgba(16, 185, 129, 0.5);
+            --success-text: #d1fae5;
+
+            /* Amarillo/Naranja: fondos oscuros + texto claro */
+            --warning: #b45309;
+            --warning-light: #d97706;
+            --warning-bg: rgba(120, 53, 15, 0.4);
+            --warning-border: rgba(245, 158, 11, 0.5);
+            --warning-text: #fef3c7;
+
+            /* Rojo: fondos oscuros + texto claro */
+            --danger: #b91c1c;
+            --danger-light: #dc2626;
+            --danger-bg: rgba(127, 29, 29, 0.4);
+            --danger-border: rgba(239, 68, 68, 0.5);
+            --danger-text: #fecaca;
+
+            /* Glass effect más opaco */
+            --glass-bg: rgba(15, 23, 42, 0.7);
+            --glass-border: rgba(71, 85, 105, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--dark-bg);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.2) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.2) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(217, 70, 239, 0.2) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(99, 102, 241, 0.2) 0px, transparent 50%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+        }
+
+        h1 {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2.5em;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            background: var(--card-bg);
+            color: var(--text-primary);
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            border-color: rgba(99, 102, 241, 0.5);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-color: rgba(16, 185, 129, 0.5);
+        }
+
+        /* KPIs */
+        .kpis {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .kpi-card {
+            padding: 24px;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, currentColor, transparent);
+            opacity: 0.5;
+        }
+
+        .kpi-label {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .kpi-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .kpi-change {
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .kpi-positive {
+            color: var(--success);
+        }
+
+        .kpi-negative {
+            color: var(--danger);
+        }
+
+        /* Gráficas */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            padding: 24px;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+        }
+
+        .chart-title {
+            font-size: 1.2em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        /* Tablas */
+        .tables-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+        }
+
+        .table-card {
+            padding: 24px;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        th {
+            background: var(--primary-gradient);
+            color: white;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        tr:hover {
+            background: var(--card-bg);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .charts-grid,
+            .tables-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            header {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+
+        @media print {
+            body {
+                background: white;
+                color: black;
+            }
+
+            .header-actions {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="dashboardContent">
+        <header>
+            <h1>📊 Dashboard Financiero</h1>
+            <div class="header-actions">
+                <a href="/" class="btn">← Volver al Inicio</a>
+                <button onclick="exportToPDF()" class="btn btn-success">📥 Descargar PDF</button>
+            </div>
+        </header>
+
+        <!-- KPIs Principales -->
+        <div class="kpis">
+            <div class="kpi-card">
+                <div class="kpi-label">Balance Actual</div>
+                <div class="kpi-value" style="color: {% if balance_actual > 0 %}var(--success){% else %}var(--danger){% endif %}">
+                    ${{ "{:,.2f}".format(balance_actual) }}
+                </div>
+                <div class="kpi-change kpi-{% if balance_actual > balance_inicial %}positive{% else %}negative{% endif %}">
+                    {% if balance_actual > balance_inicial %}
+                        ▲ +${{ "{:,.2f}".format(balance_actual - balance_inicial) }}
+                    {% else %}
+                        ▼ -${{ "{:,.2f}".format(balance_inicial - balance_actual) }}
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-label">Total Ingresos</div>
+                <div class="kpi-value kpi-positive">
+                    ${{ "{:,.2f}".format(total_ingresos) }}
+                </div>
+                <div class="kpi-change" style="color: var(--text-secondary);">
+                    Registrados a la fecha
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-label">Total Gastos</div>
+                <div class="kpi-value kpi-negative">
+                    ${{ "{:,.2f}".format(total_gastos) }}
+                </div>
+                <div class="kpi-change" style="color: var(--text-secondary);">
+                    Registrados a la fecha
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-label">Tasa de Ahorro</div>
+                <div class="kpi-value" style="color: var(--warning)">
+                    {% if total_ingresos > 0 %}
+                        {{ "{:.1f}".format(((total_ingresos - total_gastos) / total_ingresos) * 100) }}%
+                    {% else %}
+                        0%
+                    {% endif %}
+                </div>
+                <div class="kpi-change" style="color: var(--text-secondary);">
+                    {% if total_ingresos > 0 %}
+                        {% if ((total_ingresos - total_gastos) / total_ingresos) * 100 > 20 %}
+                            ✅ Excelente
+                        {% elif ((total_ingresos - total_gastos) / total_ingresos) * 100 > 10 %}
+                            ⚠️ Bueno
+                        {% else %}
+                            ❌ Mejorable
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráficas -->
+        <div class="charts-grid">
+            <!-- Ingresos vs Gastos Mensuales -->
+            <div class="chart-card">
+                <div class="chart-title">📈 Ingresos vs Gastos (Últimos 6 meses)</div>
+                <div class="chart-container">
+                    <canvas id="ingresosGastosChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Proyección -->
+            <div class="chart-card">
+                <div class="chart-title">🔮 Proyección de Saldo (Próximos 6 meses)</div>
+                <div class="chart-container">
+                    <canvas id="proyeccionChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Gastos por Tipo -->
+            <div class="chart-card">
+                <div class="chart-title">🏷️ Distribución de Gastos por Tipo</div>
+                <div class="chart-container">
+                    <canvas id="gastosTipoChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Compromisos Mensuales -->
+            <div class="chart-card">
+                <div class="chart-title">💳 Compromisos Mensuales Recurrentes</div>
+                <div class="chart-container">
+                    <canvas id="compromisosChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráficas de Categorías -->
+        <div class="charts-grid">
+            <!-- Gastos por Categoría -->
+            <div class="chart-card">
+                <div class="chart-title">📊 Gastos por Categoría</div>
+                <div class="chart-container">
+                    <canvas id="gastosCategoriaChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Ingresos por Categoría -->
+            <div class="chart-card">
+                <div class="chart-title">💰 Ingresos por Categoría</div>
+                <div class="chart-container">
+                    <canvas id="ingresosCategoriaChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tablas de Datos -->
+        <div class="tables-grid">
+            <!-- Top Gastos -->
+            <div class="table-card">
+                <div class="chart-title">💸 Top 5 Gastos Más Grandes</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Concepto</th>
+                            <th>Monto</th>
+                            <th>Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for gasto in top_gastos %}
+                        <tr>
+                            <td>{{ gasto['nombre'] }}</td>
+                            <td style="color: var(--danger); font-weight: 600;">${{ "{:,.2f}".format(gasto['monto']) }}</td>
+                            <td style="color: var(--text-secondary);">{{ gasto['fecha'] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Ingresos Recurrentes -->
+            <div class="table-card">
+                <div class="chart-title">💰 Ingresos Recurrentes Activos</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Concepto</th>
+                            <th>Monto Mensual</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ingreso in ingresos_rec_lista %}
+                        <tr>
+                            <td>{{ ingreso['nombre'] }}</td>
+                            <td style="color: var(--success); font-weight: 600;">${{ "{:,.2f}".format(ingreso['monto']) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Créditos Activos -->
+            <div class="table-card">
+                <div class="chart-title">💳 Créditos/Tarjetas Activas</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Concepto</th>
+                            <th>Pago Mensual</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for credito in creditos_activos %}
+                        <tr>
+                            <td>{{ credito['nombre'] }}</td>
+                            <td style="color: var(--danger); font-weight: 600;">${{ "{:,.2f}".format(credito['monto_mensual']) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- MSI Activos -->
+            <div class="table-card">
+                <div class="chart-title">🛒 Compras MSI Activas</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Mensualidad</th>
+                            <th>Meses Rest.</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for msi in msis_activos %}
+                        <tr>
+                            <td>{{ msi['producto'] }}</td>
+                            <td style="color: var(--warning); font-weight: 600;">${{ "{:,.2f}".format(msi['mensualidad']) }}</td>
+                            <td style="color: var(--text-secondary);">{{ msi['meses_restantes'] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuración global de Chart.js
+        Chart.defaults.color = '#cbd5e1';
+        Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
+        Chart.defaults.font.family = "'Inter', sans-serif";
+
+        // Datos del servidor
+        const ingresosData = {{ ingresos_por_mes | tojson }};
+        const gastosData = {{ gastos_por_mes | tojson }};
+        const proyeccionData = {{ proyeccion | tojson }};
+        const gastosTipoData = {{ gastos_por_tipo | tojson }};
+
+        // 1. Gráfica Ingresos vs Gastos
+        const ctxIngresosGastos = document.getElementById('ingresosGastosChart').getContext('2d');
+        new Chart(ctxIngresosGastos, {
+            type: 'bar',
+            data: {
+                labels: ingresosData.map(d => d.mes || d[0]).reverse(),
+                datasets: [{
+                    label: 'Ingresos',
+                    data: ingresosData.map(d => d.total || d[1]).reverse(),
+                    backgroundColor: 'rgba(16, 185, 129, 0.7)',
+                    borderColor: 'rgba(16, 185, 129, 1)',
+                    borderWidth: 2,
+                    borderRadius: 8
+                }, {
+                    label: 'Gastos',
+                    data: gastosData.map(d => d.total || d[1]).reverse(),
+                    backgroundColor: 'rgba(239, 68, 68, 0.7)',
+                    borderColor: 'rgba(239, 68, 68, 1)',
+                    borderWidth: 2,
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.05)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+
+        // 2. Gráfica de Proyección (solo primeras 12 quincenas = 6 meses)
+        const proyeccionDataLimited = proyeccionData.slice(0, 12);
+        const ctxProyeccion = document.getElementById('proyeccionChart').getContext('2d');
+        new Chart(ctxProyeccion, {
+            type: 'line',
+            data: {
+                // Simplificar etiquetas: "Nov Q2", "Dic Q1", etc.
+                labels: proyeccionDataLimited.map(d => {
+                    const label = d.quincena || d.mes;
+                    // Extraer solo mes y quincena: "Noviembre 2025 - Quincena 2" -> "Nov Q2"
+                    const match = label.match(/(\w+)\s+\d+\s+-\s+Quincena\s+(\d+)/);
+                    if (match) {
+                        const mes = match[1].substring(0, 3); // Primeras 3 letras
+                        const q = match[2];
+                        return `${mes} Q${q}`;
+                    }
+                    return label;
+                }),
+                datasets: [{
+                    label: 'Saldo Estimado',
+                    data: proyeccionDataLimited.map(d => d.saldo_estimado),
+                    backgroundColor: 'rgba(99, 102, 241, 0.2)',
+                    borderColor: 'rgba(99, 102, 241, 1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 6,
+                    pointHoverRadius: 8,
+                    pointBackgroundColor: proyeccionDataLimited.map(d => {
+                        // Color según estado
+                        if (d.estado === 'verde') return 'rgba(16, 185, 129, 1)';
+                        if (d.estado === 'amarillo') return 'rgba(251, 191, 36, 1)';
+                        return 'rgba(239, 68, 68, 1)'; // rojo
+                    }),
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const data = proyeccionDataLimited[context.dataIndex];
+                                return [
+                                    `Saldo: $${context.parsed.y.toLocaleString('es-MX', {minimumFractionDigits: 2})}`,
+                                    `Ingresos: $${data.ingresos.toLocaleString('es-MX', {minimumFractionDigits: 2})}`,
+                                    `Pagos: $${data.pagos.toLocaleString('es-MX', {minimumFractionDigits: 2})}`
+                                ];
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.05)'
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value.toLocaleString('es-MX');
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            maxRotation: 45,
+                            minRotation: 45
+                        }
+                    }
+                }
+            }
+        });
+
+        // 3. Gráfica de Gastos por Tipo (Donut)
+        const ctxGastosTipo = document.getElementById('gastosTipoChart').getContext('2d');
+        const colores = [
+            'rgba(239, 68, 68, 0.8)',
+            'rgba(245, 158, 11, 0.8)',
+            'rgba(59, 130, 246, 0.8)',
+            'rgba(16, 185, 129, 0.8)',
+            'rgba(168, 85, 247, 0.8)',
+            'rgba(236, 72, 153, 0.8)'
+        ];
+
+        new Chart(ctxGastosTipo, {
+            type: 'doughnut',
+            data: {
+                labels: gastosTipoData.map(d => d.tipo || d[0]),
+                datasets: [{
+                    data: gastosTipoData.map(d => d.total || d[1]),
+                    backgroundColor: colores.slice(0, gastosTipoData.length),
+                    borderWidth: 2,
+                    borderColor: '#0f172a'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                    }
+                }
+            }
+        });
+
+        // 4. Gráfica de Compromisos
+        const ingresosRecData = {{ ingresos_rec_lista | tojson }};
+        const creditosData = {{ creditos_activos | tojson }};
+        const msiData = {{ msis_activos | tojson }};
+
+        const totalIngresosRec = ingresosRecData.reduce((sum, i) => sum + (i.monto || i[1] || 0), 0);
+        const totalCreditos = creditosData.reduce((sum, c) => sum + (c.monto_mensual || c[1] || 0), 0);
+        const totalMsi = msiData.reduce((sum, m) => sum + (m.mensualidad || m[1] || 0), 0);
+
+        const ctxCompromisos = document.getElementById('compromisosChart').getContext('2d');
+        new Chart(ctxCompromisos, {
+            type: 'bar',
+            data: {
+                labels: ['Ingresos Recurrentes', 'Créditos/Tarjetas', 'MSI'],
+                datasets: [{
+                    label: 'Monto Mensual',
+                    data: [totalIngresosRec, totalCreditos, totalMsi],
+                    backgroundColor: [
+                        'rgba(16, 185, 129, 0.7)',
+                        'rgba(239, 68, 68, 0.7)',
+                        'rgba(245, 158, 11, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgba(16, 185, 129, 1)',
+                        'rgba(239, 68, 68, 1)',
+                        'rgba(245, 158, 11, 1)'
+                    ],
+                    borderWidth: 2,
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.05)'
+                        }
+                    },
+                    y: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+
+        // 5. Gráfica de Gastos por Categoría
+        fetch('/api/reportes/gastos_por_categoria')
+            .then(response => response.json())
+            .then(data => {
+                const ctxGastosCategoria = document.getElementById('gastosCategoriaChart').getContext('2d');
+                new Chart(ctxGastosCategoria, {
+                    type: 'doughnut',
+                    data: {
+                        labels: data.map(d => d.categoria),
+                        datasets: [{
+                            data: data.map(d => d.total),
+                            backgroundColor: data.map(d => d.color),
+                            borderColor: '#0a0e1a',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: {
+                                    padding: 15,
+                                    font: {
+                                        size: 12
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        label += '$' + context.parsed.toLocaleString('es-MX', {minimumFractionDigits: 2});
+                                        return label;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => console.error('Error cargando gastos por categoría:', error));
+
+        // 6. Gráfica de Ingresos por Categoría
+        fetch('/api/reportes/ingresos_por_categoria')
+            .then(response => response.json())
+            .then(data => {
+                const ctxIngresosCategoria = document.getElementById('ingresosCategoriaChart').getContext('2d');
+                new Chart(ctxIngresosCategoria, {
+                    type: 'doughnut',
+                    data: {
+                        labels: data.map(d => d.categoria),
+                        datasets: [{
+                            data: data.map(d => d.total),
+                            backgroundColor: data.map(d => d.color),
+                            borderColor: '#0a0e1a',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: {
+                                    padding: 15,
+                                    font: {
+                                        size: 12
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        label += '$' + context.parsed.toLocaleString('es-MX', {minimumFractionDigits: 2});
+                                        return label;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => console.error('Error cargando ingresos por categoría:', error));
+
+        // Función para exportar a PDF
+        async function exportToPDF() {
+            const button = event.target;
+            button.disabled = true;
+            button.textContent = '⏳ Generando PDF...';
+
+            try {
+                const element = document.getElementById('dashboardContent');
+                const canvas = await html2canvas(element, {
+                    scale: 2,
+                    backgroundColor: '#0f172a',
+                    logging: false
+                });
+
+                const imgData = canvas.toDataURL('image/png');
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('p', 'mm', 'a4');
+
+                const imgWidth = 210;
+                const pageHeight = 295;
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                let heightLeft = imgHeight;
+                let position = 0;
+
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+
+                while (heightLeft >= 0) {
+                    position = heightLeft - imgHeight;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+
+                const fecha = new Date().toISOString().split('T')[0];
+                pdf.save(`dashboard-financiero-${fecha}.pdf`);
+
+                button.disabled = false;
+                button.textContent = '📥 Descargar PDF';
+            } catch (error) {
+                console.error('Error al generar PDF:', error);
+                alert('Error al generar el PDF. Por favor, intenta de nuevo.');
+                button.disabled = false;
+                button.textContent = '📥 Descargar PDF';
+            }
+        }
+    </script>
+</body>
+</html>

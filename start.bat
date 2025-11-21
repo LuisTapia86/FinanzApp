@@ -1,0 +1,3 @@
+@echo off
+echo Iniciando FinanzApp...
+.venvScriptspython.exe app.py

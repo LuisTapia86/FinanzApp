@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sistema Anti-Abandono TDAH</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      }
+      h1 {
+        color: #667eea;
+        margin-bottom: 10px;
+        font-size: 2em;
+      }
+      .subtitle {
+        color: #666;
+        margin-bottom: 30px;
+        font-size: 1.1em;
+      }
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+        margin-bottom: 30px;
+      }
+      .stat-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 15px;
+        text-align: center;
+      }
+      .stat-number {
+        font-size: 2.5em;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+      .stat-label {
+        font-size: 0.9em;
+        opacity: 0.9;
+      }
+      .progress-bar {
+        width: 100%;
+        height: 30px;
+        background: #f0f0f0;
+        border-radius: 15px;
+        overflow: hidden;
+        margin-bottom: 30px;
+      }
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        transition: width 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+      }
+      .day-section {
+        margin-bottom: 25px;
+        border-left: 4px solid #667eea;
+        padding-left: 20px;
+      }
+      .day-header {
+        font-size: 1.3em;
+        color: #667eea;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .day-number {
+        background: #667eea;
+        color: white;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+      }
+      .task {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        transition: all 0.3s ease;
+      }
+      .task:hover {
+        background: #e9ecef;
+        transform: translateX(5px);
+      }
+      .task.completed {
+        background: #d4edda;
+        border-left: 4px solid #28a745;
+      }
+      .checkbox {
+        width: 25px;
+        height: 25px;
+        cursor: pointer;
+      }
+      .task-text {
+        flex: 1;
+      }
+      .task-time {
+        color: #666;
+        font-size: 0.9em;
+        font-weight: bold;
+      }
+      .warning {
+        background: #fff3cd;
+        border-left: 4px solid #ffc107;
+        padding: 15px;
+        border-radius: 10px;
+        margin: 20px 0;
+        color: #856404;
+      }
+      .success {
+        background: #d4edda;
+        border-left: 4px solid #28a745;
+        padding: 15px;
+        border-radius: 10px;
+        margin: 20px 0;
+        color: #155724;
+      }
+      .btn-reset {
+        background: #dc3545;
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1em;
+        margin-top: 20px;
+      }
+      .btn-reset:hover {
+        background: #c82333;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🎯 Tu Plan de 7 Días</h1>
+      <p class="subtitle">Sistema Anti-Abandono para crear tu FinanzApp</p>
+
+      <div class="stats">
+        <div class="stat-card">
+          <div class="stat-number" id="racha">0</div>
+          <div class="stat-label">Días de racha</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="completadas">0/21</div>
+          <div class="stat-label">Tareas completadas</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="porcentaje">0%</div>
+          <div class="stat-label">Progreso total</div>
+        </div>
+      </div>
+
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressBar" style="width: 0%">0%</div>
+      </div>
+
+      <div id="warningMessage"></div>
+
+      <!-- DÍA 1 -->
+      <div class="day-section">
+        <div class="day-header">
+          <div class="day-number">1</div>
+          <span>Configuración del Entorno</span>
+        </div>
+        <div class="task">
+          <input type="checkbox" class="checkbox" data-day="1" data-task="1" />
+          <div class="task-text">
+            <strong>Crear carpeta del proyecto</strong><br />
+            Crea una carpeta llamada "finanzapp" en tu escritorio
+          </div>
+          <span class="task-time">2 min</span>
+        </div>
+        <div class="task">
+          <input type="checkbox" class="checkbox" data-day="1" data-task="2" />
+          <div class="task-text">
+            <strong>Instalar Flask</strong><br />
+            Abre terminal en VS Code y escribe: <code>pip install flask</code>
+          </div>
+          <span class="task-time">5 min</span>
+        </div>
+        <div class="task">
+          <input type="checkbox" class="checkbox" data-day="1" data-task="3" />
+          <div class="task-text">
+            <strong>Crear archivo app.py</strong><br />
+            Crea archivo app.py y escribe "Hello World" básico en Flask
+          </div>
+          <span class="task-time">10 min</span>
+        </div>
+      </div>
+
+      <!-- DÍA 2 -->
+      <div class="day-section">
+        <div class="day-header">
+          <div class="day-number">2</div>
+          <span>Estructura Básica</span>
+        </div>
+        <div class="task">
+          <input type="checkbox" class="checkbox" data-day="2" data-task="1" />
+          <div class="task-text">
+            <strong>Crear carpeta templates</strong><br />
+            Dentro de finanzapp, crea carpeta "templates"
+          </div>
+          <span class="task-time">1 min</span>
+        </div>
+        <div class="task">
+          <input type="checkbox" class="checkbox" data-day="2" data-task="2" />
+          <div class="task-text">
+            <strong>Crear index.html</strong><br />
+            HTML básico con título "Mi FinanzApp"
+          </div>
+          <span class="task-time">10 min</span>
+        </div>
+        <div class="task">
+          <input type="checkbox" class="checkbox" data-day="2" data-task="3" />
+          <div class="task-text">
+            <strong>Conectar Flask con HTML</strong><br />
+            Hacer que Flask muestre tu index.html
+          </div>
+          <span class="task-time">5 min</span>
+        </div>
+      </div>
+
+      <!-- DÍA 3 -->
+      <div class="day-section">
+        <div class="day-header">
+          <div class="day-number">3</div>
+          <span>Base de Datos</span>
+        </div>
+        <div class="task">
+          <input type="checkbox" class="checkbox" data-day="3" data-task="1" />
+          <div class="task-text">
+            <strong>Instalar SQLite</strong><br />
+            Ya viene con Python, solo importarlo en app.py
+          </div>
+          <span class="task-time">2 min</span>
+        </div>
+        <div class="task">
+          <input type="checkbox" class="checkbox" data-day="3" data-task="2" />
+          <div class="task-text">
+            <strong>Crear tabla de ingresos</strong><br />
+            Tabla con: fecha, concepto, monto
+          </div>
+          <span class="task-time">10 min</span>
+        </div>
+        <div class="task">
+          <input type="checkbox" class="checkbox" data-day="3" data-task="3" />
+          <div class="task-text">
+            <strong>Crear tabla de gastos</strong><br />
+            Tabla con: fecha, tipo (crédito/tarjeta), nombre, monto
+          </div>
+          <span class="task-time">10 min</span>
+        </div>
+      </div>
+
+      <!-- DÍA 4 -->
+      <div class="day-section">
+        <div class="day-header">
+          <div class="day-number">4</div>
+          <span>Formularios</span>
+        </div>
+        <div class="task">
+          <input type="checkbox" class="checkbox" data-day="4" data-task="1" />
+          <div class="task-text">
+            <strong>Formulario de ingresos</strong><br />
+            Crear form HTML para agregar sueldo/extras
+          </div>
+          <span class="task-time">10 min</span>
+        </div>
+        <div class="task">
+          <input type="checkbox" class="checkbox" data-day="4" data-task="2" />
+          <div class="task-text">
+            <strong>Guardar ingresos en BD</strong><br />
+            Conectar form con base de datos
+          </div>
+          <span class="task-time">15 min</span>
+        </div>
+        <div class="task">
+          <input type="checkbox" class="checkbox" data-day="4" data-task="3" />
+          <div class="task-text">
+            <strong>Probar que funcione</strong><br />
+            Agregar 2-3 ingresos de prueba
+          </div>
+          <span class="task-time">5 min</span>
+        </div>
+      </div>
+
+      <!-- DÍA 5 -->
+      <div class="day-section">
+        <div class="day-header">
+          <div class="day-number">5</div>
+          <span>Registro de Gastos</span>
+        </div>
+        <div class="task">
+          <input type="checkbox" class="checkbox" data-day="5" data-task="1" />
+          <div class="task-text">
+            <strong>Formulario de créditos</strong><br />
+            Form para tus 3 créditos con mensualidad fija
+          </div>
+          <span class="task-time">10 min</span>
+        </div>
+        <div class="task">
+          <input type="checkbox" class="checkbox" data-day="5" data-task="2" />
+          <div class="task-text">
+            <strong>Formulario de tarjetas</strong><br />
+            Form para tus 4 tarjetas con gasto variable
+          </div>
+          <span class="task-time">10 min</span>
+        </div>
+        <div class="task">
+          <input type="checkbox" class="checkbox" data-day="5" data-task="3" />
+          <div class="task-text">
+            <strong>Guardar gastos en BD</strong><br />
+            Conectar ambos forms con base de datos
+          </div>
+          <span class="task-time">15 min</span>
+        </div>
+      </div>
+
+      <!-- DÍA 6 -->
+      <div class="day-section">
+        <div class="day-header">
+          <div class="day-number">6</div>
+          <span>Dashboard</span>
+        </div>
+        <div class="task">
+          <input type="checkbox" class="checkbox" data-day="6" data-task="1" />
+          <div class="task-text">
+            <strong>Calcular total ingresos</strong><br />
+            Sumar todos los ingresos del mes
+          </div>
+          <span class="task-time">10 min</span>
+        </div>
+        <div class="task">
+          <input type="checkbox" class="checkbox" data-day="6" data-task="2" />
+          <div class="task-text">
+            <strong>Calcular total gastos</strong><br />
+            Sumar créditos + tarjetas del mes
+          </div>
+          <span class="task-time">10 min</span>
+        </div>
+        <div class="task">
+          <input type="checkbox" class="checkbox" data-day="6" data-task="3" />
+          <div class="task-text">
+            <strong>Mostrar balance</strong><br />
+            Ingresos - Gastos = Balance final
+          </div>
+          <span class="task-time">10 min</span>
+        </div>
+      </div>
+
+      <!-- DÍA 7 -->
+      <div class="day-section">
+        <div class="day-header">
+          <div class="day-number">7</div>
+          <span>Prueba Final</span>
+        </div>
+        <div class="task">
+          <input type="checkbox" class="checkbox" data-day="7" data-task="1" />
+          <div class="task-text">
+            <strong>Agregar tus datos REALES</strong><br />
+            Tus ingresos, tus 3 créditos, tus 4 tarjetas
+          </div>
+          <span class="task-time">15 min</span>
+        </div>
+        <div class="task">
+          <input type="checkbox" class="checkbox" data-day="7" data-task="2" />
+          <div class="task-text">
+            <strong>Verificar cálculos</strong><br />
+            Comparar con tu Excel actual
+          </div>
+          <span class="task-time">10 min</span>
+        </div>
+        <div class="task">
+          <input type="checkbox" class="checkbox" data-day="7" data-task="3" />
+          <div class="task-text">
+            <strong>🎉 CELEBRAR</strong><br />
+            ¡Terminaste tu primera app funcional!
+          </div>
+          <span class="task-time">∞</span>
+        </div>
+      </div>
+
+      <button class="btn-reset" onclick="resetProgress()">
+        Reiniciar Progreso
+      </button>
+    </div>
+
+    <script>
+      const tasks = {};
+      let lastCheckDate = null;
+
+      function loadProgress() {
+        const saved = localStorage.getItem("finanzapp_progress");
+        if (saved) {
+          const data = JSON.parse(saved);
+          Object.assign(tasks, data.tasks);
+          lastCheckDate = data.lastCheckDate;
+          updateUI();
+        }
+      }
+
+      function saveProgress() {
+        const data = {
+          tasks: tasks,
+          lastCheckDate: new Date().toDateString(),
+        };
+        localStorage.setItem("finanzapp_progress", JSON.stringify(data));
+      }
+
+      function updateUI() {
+        const checkboxes = document.querySelectorAll(".checkbox");
+        let completed = 0;
+        const total = checkboxes.length;
+
+        checkboxes.forEach((cb) => {
+          const day = cb.dataset.day;
+          const task = cb.dataset.task;
+          const key = `${day}-${task}`;
+
+          if (tasks[key]) {
+            cb.checked = true;
+            cb.parentElement.classList.add("completed");
+            completed++;
+          } else {
+            cb.checked = false;
+            cb.parentElement.classList.remove("completed");
+          }
+        });
+
+        const percentage = Math.round((completed / total) * 100);
+        document.getElementById(
+          "completadas"
+        ).textContent = `${completed}/${total}`;
+        document.getElementById("porcentaje").textContent = `${percentage}%`;
+        document.getElementById("progressBar").style.width = `${percentage}%`;
+        document.getElementById("progressBar").textContent = `${percentage}%`;
+
+        updateStreak();
+        checkWarning();
+      }
+
+      function updateStreak() {
+        const today = new Date().toDateString();
+        const yesterday = new Date(Date.now() - 86400000).toDateString();
+
+        let streak = 0;
+        const days = [
+          ...new Set(Object.keys(tasks).map((k) => k.split("-")[0])),
+        ];
+
+        if (days.length > 0) {
+          streak = days.length;
+          if (lastCheckDate !== today && lastCheckDate !== yesterday) {
+            streak = 0;
+          }
+        }
+
+        document.getElementById("racha").textContent = streak;
+      }
+
+      function checkWarning() {
+        const today = new Date();
+        const last = lastCheckDate ? new Date(lastCheckDate) : null;
+        const warningDiv = document.getElementById("warningMessage");
+
+        if (last) {
+          const diffDays = Math.floor((today - last) / (1000 * 60 * 60 * 24));
+
+          if (diffDays >= 2) {
+            warningDiv.innerHTML = `
+                        <div class="warning">
+                            ⚠️ <strong>¡ALERTA!</strong> Llevas ${diffDays} días sin avanzar. 
+                            ¿Vas a rajar o qué? Haz aunque sea UNA tarea hoy.
+                        </div>
+                    `;
+          } else if (diffDays === 1) {
+            warningDiv.innerHTML = `
+                        <div class="warning">
+                            ⏰ Llevas 1 día sin avanzar. No rompas la racha.
+                        </div>
+                    `;
+          } else {
+            warningDiv.innerHTML = `
+                        <div class="success">
+                            ✅ ¡Bien! Sigues en racha. Sigue así.
+                        </div>
+                    `;
+          }
+        } else {
+          warningDiv.innerHTML = "";
+        }
+      }
+
+      document.querySelectorAll(".checkbox").forEach((cb) => {
+        cb.addEventListener("change", function () {
+          const day = this.dataset.day;
+          const task = this.dataset.task;
+          const key = `${day}-${task}`;
+
+          if (this.checked) {
+            tasks[key] = true;
+          } else {
+            delete tasks[key];
+          }
+
+          saveProgress();
+          updateUI();
+        });
+      });
+
+      function resetProgress() {
+        if (confirm("¿Seguro que quieres reiniciar TODO el progreso?")) {
+          localStorage.removeItem("finanzapp_progress");
+          Object.keys(tasks).forEach((key) => delete tasks[key]);
+          lastCheckDate = null;
+          updateUI();
+        }
+      }
+
+      loadProgress();
+    </script>
+  </body>
+</html>

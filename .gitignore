@@ -1,0 +1,37 @@
+# Base de datos con datos personales
+finanzas_personal.db
+
+# La base de datos finanzas.db SÍ se incluye (es la versión demo)
+# finanzas.db ya NO está ignorada
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+ENV/
+env/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Debug scripts (opcionales)
+debug_*.py
+test_*.py
+
+# Archivos temporales
+*.log
+*.tmp
+
+# Windows reserved names
+nul

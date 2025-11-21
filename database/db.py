@@ -1,0 +1,132 @@
+# database/db.py - Funciones de base de datos
+import sqlite3
+from config import Config
+
+def get_db_connection():
+    """Obtener conexión a la base de datos"""
+    conn = sqlite3.connect(Config.DATABASE_PATH)
+    conn.row_factory = sqlite3.Row  # Para acceder a columnas por nombre
+    return conn
+
+
+def init_db():
+    """Inicializar base de datos"""
+    conn = get_db_connection()
+    c = conn.cursor()
+
+    # Tabla de categorías
+    c.execute('''CREATE TABLE IF NOT EXISTS categorias
+                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                  nombre TEXT UNIQUE NOT NULL,
+                  tipo TEXT NOT NULL,
+                  color TEXT DEFAULT '#6c757d',
+                  icono TEXT DEFAULT 'circle')''')
+
+    # Tabla de ingresos
+    c.execute('''CREATE TABLE IF NOT EXISTS ingresos
+                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                  fecha TEXT,
+                  concepto TEXT,
+                  monto REAL,
+                  categoria_id INTEGER,
+                  FOREIGN KEY (categoria_id) REFERENCES categorias(id))''')
+
+    # Tabla de gastos
+    c.execute('''CREATE TABLE IF NOT EXISTS gastos
+                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                  fecha TEXT,
+                  tipo TEXT,
+                  nombre TEXT,
+                  monto REAL,
+                  categoria_id INTEGER,
+                  FOREIGN KEY (categoria_id) REFERENCES categorias(id))''')
+
+    # Tabla de créditos programados (pagos fijos mensuales)
+    c.execute('''CREATE TABLE IF NOT EXISTS creditos_programados
+                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                  nombre TEXT,
+                  monto_mensual REAL,
+                  dia_pago INTEGER,
+                  fecha_inicio TEXT,
+                  fecha_fin TEXT,
+                  fecha_corte INTEGER,
+                  fecha_limite_pago INTEGER,
+                  fecha_apartado INTEGER,
+                  dias_alerta INTEGER DEFAULT 10,
+                  notas TEXT,
+                  activo INTEGER DEFAULT 1)''')
+
+    # Tabla de compras MSI
+    c.execute('''CREATE TABLE IF NOT EXISTS compras_msi
+                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                  producto TEXT,
+                  precio_total REAL,
+                  meses INTEGER,
+                  mensualidad REAL,
+                  fecha_primera_mensualidad TEXT,
+                  meses_restantes INTEGER,
+                  dia_pago INTEGER,
+                  dias_alerta INTEGER DEFAULT 10,
+                  activo INTEGER DEFAULT 1)''')
+
+    # Tabla de configuración (nueva estructura con columnas directas)
+    c.execute('''CREATE TABLE IF NOT EXISTS configuracion
+                 (id INTEGER PRIMARY KEY,
+                  balance_inicial REAL DEFAULT 0,
+                  primera_vez INTEGER DEFAULT 1)''')
+
+    # Tabla de ingresos recurrentes
+    c.execute('''CREATE TABLE IF NOT EXISTS ingresos_recurrentes
+                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                  nombre TEXT,
+                  monto REAL,
+                  dia_pago INTEGER,
+                  fecha_inicio TEXT,
+                  fecha_fin TEXT,
+                  activo INTEGER DEFAULT 1)''')
+
+    # Tabla de historial de simulaciones
+    c.execute('''CREATE TABLE IF NOT EXISTS simulaciones_historial
+                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                  fecha_simulacion TEXT,
+                  producto TEXT,
+                  precio_total REAL,
+                  meses INTEGER,
+                  mensualidad REAL,
+                  veredicto TEXT,
+                  saldo_inicial REAL,
+                  saldo_final_proyectado REAL,
+                  mes_critico TEXT,
+                  saldo_minimo REAL)''')
+
+    # Insertar registro de configuración si no existe
+    c.execute("INSERT OR IGNORE INTO configuracion (id, balance_inicial, primera_vez) VALUES (1, 0.0, 1)")
+
+    # Insertar categorías predeterminadas
+    categorias_default = [
+        # Categorías de Gastos
+        ('Alimentación', 'gasto', '#FF6384', 'utensils'),
+        ('Transporte', 'gasto', '#36A2EB', 'car'),
+        ('Vivienda', 'gasto', '#FFCE56', 'home'),
+        ('Servicios', 'gasto', '#4BC0C0', 'bolt'),
+        ('Entretenimiento', 'gasto', '#9966FF', 'gamepad'),
+        ('Salud', 'gasto', '#FF9F40', 'heartbeat'),
+        ('Educación', 'gasto', '#C9CBCF', 'graduation-cap'),
+        ('Ropa', 'gasto', '#FF6384', 'tshirt'),
+        ('Otros Gastos', 'gasto', '#6c757d', 'circle'),
+
+        # Categorías de Ingresos
+        ('Salario', 'ingreso', '#28a745', 'money-bill-wave'),
+        ('Freelance', 'ingreso', '#20c997', 'laptop-code'),
+        ('Inversiones', 'ingreso', '#17a2b8', 'chart-line'),
+        ('Ventas', 'ingreso', '#ffc107', 'shopping-cart'),
+        ('Otros Ingresos', 'ingreso', '#6c757d', 'circle')
+    ]
+
+    for categoria in categorias_default:
+        c.execute('''INSERT OR IGNORE INTO categorias (nombre, tipo, color, icono)
+                     VALUES (?, ?, ?, ?)''', categoria)
+
+    conn.commit()
+    conn.close()
+    print("[OK] Base de datos inicializada")
