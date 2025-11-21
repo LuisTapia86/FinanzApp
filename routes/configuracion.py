@@ -73,6 +73,8 @@ def agregar_ingreso_recurrente():
         dia_pago_str = request.form.get('dia_pago', '1')
         fecha_inicio = request.form.get('fecha_inicio', '').strip()
         fecha_fin = request.form.get('fecha_fin', '').strip()
+        frecuencia = request.form.get('frecuencia', 'mensual').strip()
+        mes_especifico_str = request.form.get('mes_especifico', '')
 
         # Validar nombre
         valido_nombre, nombre, error_nombre = validar_texto(nombre, "Nombre")
@@ -110,13 +112,23 @@ def agregar_ingreso_recurrente():
                 flash(f'Error: {error_fecha_fin}', 'error')
                 return redirect('/')
 
+        # Procesar mes_especifico (solo para frecuencia anual)
+        mes_especifico = None
+        if frecuencia == 'anual' and mes_especifico_str:
+            try:
+                mes_especifico = int(mes_especifico_str)
+                if mes_especifico < 1 or mes_especifico > 12:
+                    mes_especifico = None
+            except:
+                mes_especifico = None
+
         # Insertar en BD
         conn = get_db_connection()
         c = conn.cursor()
         c.execute('''INSERT INTO ingresos_recurrentes
-                    (nombre, monto, dia_pago, fecha_inicio, fecha_fin)
-                    VALUES (?, ?, ?, ?, ?)''',
-                 (nombre, monto, dia_pago, fecha_inicio, fecha_fin))
+                    (nombre, monto, dia_pago, fecha_inicio, fecha_fin, frecuencia, mes_especifico)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)''',
+                 (nombre, monto, dia_pago, fecha_inicio, fecha_fin, frecuencia, mes_especifico))
         conn.commit()
         conn.close()
 

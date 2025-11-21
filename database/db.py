@@ -87,6 +87,8 @@ def init_db():
                   dia_pago INTEGER,
                   fecha_inicio TEXT,
                   fecha_fin TEXT,
+                  frecuencia TEXT DEFAULT 'mensual',
+                  mes_especifico INTEGER DEFAULT NULL,
                   activo INTEGER DEFAULT 1)''')
 
     # Tabla de préstamos
@@ -168,6 +170,23 @@ def init_db():
                     print(f"[OK] Columna usuario_id agregada a '{tabla}'")
         except Exception as e:
             print(f"[WARN] Error agregando usuario_id a '{tabla}': {str(e)}")
+
+    # Agregar columnas frecuencia y mes_especifico a ingresos_recurrentes si no existen
+    try:
+        c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='ingresos_recurrentes'")
+        if c.fetchone():
+            c.execute("PRAGMA table_info(ingresos_recurrentes)")
+            columnas_ing_rec = [col[1] for col in c.fetchall()]
+
+            if 'frecuencia' not in columnas_ing_rec:
+                c.execute('ALTER TABLE ingresos_recurrentes ADD COLUMN frecuencia TEXT DEFAULT "mensual"')
+                print("[OK] Columna frecuencia agregada a 'ingresos_recurrentes'")
+
+            if 'mes_especifico' not in columnas_ing_rec:
+                c.execute('ALTER TABLE ingresos_recurrentes ADD COLUMN mes_especifico INTEGER DEFAULT NULL')
+                print("[OK] Columna mes_especifico agregada a 'ingresos_recurrentes'")
+    except Exception as e:
+        print(f"[WARN] Error agregando columnas a ingresos_recurrentes: {str(e)}")
 
     # Insertar registro de configuración si no existe
     c.execute("INSERT OR IGNORE INTO configuracion (id, balance_inicial, primera_vez) VALUES (1, 0.0, 1)")
