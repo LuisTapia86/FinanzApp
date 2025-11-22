@@ -216,8 +216,8 @@ def init_db():
         c.execute('''INSERT OR IGNORE INTO categorias (nombre, tipo, color, icono)
                      VALUES (?, ?, ?, ?)''', categoria)
 
-    # Insertar datos de demostración si la base de datos está vacía
-    c.execute('SELECT COUNT(*) FROM ingresos')
+    # Insertar datos de demostración si no existen tarjetas
+    c.execute('SELECT COUNT(*) FROM tarjetas_credito')
     if c.fetchone()[0] == 0:
         print("[INFO] Insertando datos de demostración...")
 
