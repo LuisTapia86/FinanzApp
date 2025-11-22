@@ -649,6 +649,22 @@
           gap: 12px !important;
         }
 
+        /* FORZAR grid de ingresos/gastos a 1 columna en mobile */
+        #ingresosGastosGrid {
+          grid-template-columns: 1fr !important;
+          gap: 15px !important;
+        }
+
+        /* Sections con mejor espaciado */
+        .section {
+          margin-bottom: 20px !important;
+        }
+
+        .section h2 {
+          font-size: 1.3em !important;
+          word-wrap: break-word !important;
+        }
+
         /* Reducir font-size de saldos que tienen inline styles */
         #saldoInicial,
         #saldoActual {
@@ -740,13 +756,31 @@
           border-top: 1px solid var(--card-border);
           padding-top: 10px;
           margin-top: 6px;
-          justify-content: center;
+          flex-direction: column !important;
+          align-items: stretch !important;
+          gap: 8px !important;
+        }
+
+        /* Acciones en tablas - forzar columna en mobile */
+        table td:last-child::before {
+          text-align: center !important;
+          margin: 0 0 8px 0 !important;
+        }
+
+        /* Botones en tablas - ocupar todo el ancho */
+        table td:last-child a,
+        table td:last-child button {
+          width: 100% !important;
+          margin: 0 !important;
+          display: block !important;
+          text-align: center !important;
+          box-sizing: border-box !important;
         }
 
         /* Botones en tablas */
         .btn-danger,
         .btn-secondary {
-          padding: 6px 10px;
+          padding: 8px 12px !important;
           font-size: 0.8em;
           margin: 2px;
           display: inline-block;
@@ -1079,6 +1113,7 @@
 
       <!-- INGRESOS Y GASTOS RÁPIDOS -->
       <div
+        id="ingresosGastosGrid"
         style="
           display: grid;
           grid-template-columns: 1fr 1fr;
@@ -1264,11 +1299,11 @@
           </tr>
           {% for prestamo in prestamos %}
           <tr>
-            <td>{{ prestamo['nombre'] }}</td>
-            <td>${{ "%.2f"|format(prestamo['monto_mensual']) }}</td>
-            <td>Día {{ prestamo['dia_pago'] }}</td>
-            <td>{{ prestamo['fecha_inicio'] }} - {{ prestamo['fecha_fin'] }}</td>
-            <td>
+            <td data-label="Nombre">{{ prestamo['nombre'] }}</td>
+            <td data-label="Mensualidad">${{ "%.2f"|format(prestamo['monto_mensual']) }}</td>
+            <td data-label="Día de Pago">Día {{ prestamo['dia_pago'] }}</td>
+            <td data-label="Vigencia">{{ prestamo['fecha_inicio'] }} - {{ prestamo['fecha_fin'] }}</td>
+            <td data-label="Acciones">
               <a
                 href="/desactivar_prestamo/{{ prestamo['id'] }}"
                 class="btn-delete"
@@ -1329,11 +1364,11 @@
           </tr>
           {% for tarjeta in tarjetas %}
           <tr>
-            <td>{{ tarjeta['nombre'] }}</td>
-            <td>Día {{ tarjeta['fecha_corte'] }}</td>
-            <td>Día {{ tarjeta['fecha_pago_estimada'] }}</td>
-            <td>${{ "%.2f"|format(tarjeta['limite_credito']) }}</td>
-            <td>
+            <td data-label="Nombre">{{ tarjeta['nombre'] }}</td>
+            <td data-label="Fecha Corte">Día {{ tarjeta['fecha_corte'] }}</td>
+            <td data-label="Fecha Pago">Día {{ tarjeta['fecha_pago_estimada'] }}</td>
+            <td data-label="Límite">${{ "%.2f"|format(tarjeta['limite_credito']) }}</td>
+            <td data-label="Acciones">
               <button
                 class="btn-principal"
                 onclick="abrirGastosTDC({{ tarjeta['id'] }}, '{{ tarjeta['nombre'] }}')"
@@ -1407,16 +1442,16 @@
           </tr>
           {% for ing in ingresos_recurrentes %}
           <tr>
-            <td>{{ ing[1] }}</td>
-            <td style="color: #4caf50; font-weight: bold">
+            <td data-label="Nombre">{{ ing[1] }}</td>
+            <td data-label="Monto" style="color: #4caf50; font-weight: bold">
               ${{ "%.2f"|format(ing[2]) }}
             </td>
-            <td>Día {{ ing[3] }}</td>
-            <td>{{ ing[4] }} - {{ ing[5] }}</td>
-            <td>
+            <td data-label="Día de Pago">Día {{ ing[3] }}</td>
+            <td data-label="Vigencia">{{ ing[4] }} - {{ ing[5] }}</td>
+            <td data-label="Estado">
               {% if ing[6] == 1 %}✅ Activo{% else %}⏸️ Inactivo{% endif %}
             </td>
-            <td>
+            <td data-label="Acciones">
               {% if ing[6] == 1 %}
               <a
                 href="/desactivar_ingreso_recurrente/{{ ing[0] }}"
@@ -1490,14 +1525,14 @@
           </tr>
           {% for msi in msis %}
           <tr>
-            <td>{{ msi[1] }}</td>
-            <td>${{ "%.2f"|format(msi[2]) }}</td>
-            <td>${{ "%.2f"|format(msi[4]) }}</td>
-            <td>{{ msi[6] }} de {{ msi[3] }}</td>
-            <td>
+            <td data-label="Producto">{{ msi[1] }}</td>
+            <td data-label="Total">${{ "%.2f"|format(msi[2]) }}</td>
+            <td data-label="Mensualidad">${{ "%.2f"|format(msi[4]) }}</td>
+            <td data-label="Meses Restantes">{{ msi[6] }} de {{ msi[3] }}</td>
+            <td data-label="Estado">
               {% if msi[7] == 1 %}✅ Activo{% else %}⏸️ Liquidado{% endif %}
             </td>
-            <td>
+            <td data-label="Acciones">
               {% if msi[7] == 1 %}
               <button
                 class="btn-delete"
