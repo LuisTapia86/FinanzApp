@@ -643,6 +643,18 @@
           font-size: 0.75em !important;
         }
 
+        /* FORZAR card de balance a 1 columna en mobile */
+        div[style*="grid-template-columns: 1fr 1fr 1fr"] {
+          grid-template-columns: 1fr !important;
+          gap: 12px !important;
+        }
+
+        /* Reducir font-size de saldos que tienen inline styles */
+        #saldoInicial,
+        #saldoActual {
+          font-size: 1.2em !important;
+        }
+
         .acciones-principales {
           grid-template-columns: 1fr !important;
           gap: 8px !important;
