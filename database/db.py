@@ -216,10 +216,14 @@ def init_db():
         c.execute('''INSERT OR IGNORE INTO categorias (nombre, tipo, color, icono)
                      VALUES (?, ?, ?, ?)''', categoria)
 
-    # Insertar datos de demostración si no existen tarjetas
+    # Insertar datos de demostración SOLO en producción (Render)
+    # Verificar variable de entorno USAR_DATOS_DEMO
+    import os
+    usar_datos_demo = os.environ.get('USAR_DATOS_DEMO', 'false').lower() == 'true'
+
     c.execute('SELECT COUNT(*) FROM tarjetas_credito')
-    if c.fetchone()[0] == 0:
-        print("[INFO] Insertando datos de demostración...")
+    if c.fetchone()[0] == 0 and usar_datos_demo:
+        print("[INFO] Insertando datos de demostración (USAR_DATOS_DEMO=true)...")
 
         # Balance inicial
         c.execute('UPDATE configuracion SET balance_inicial=25000.0, primera_vez=0 WHERE id=1')
