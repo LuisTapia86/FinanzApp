@@ -108,7 +108,3 @@ Contributions are welcome! Open an Issue or Pull Request.
 ## 📄 License
 
 MIT License - see LICENSE for details
-
----
-
-**Made with ❤️ in Mexico**
