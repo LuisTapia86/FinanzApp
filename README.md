@@ -5,6 +5,7 @@ Full-stack web application for personal finance management with automated biweek
 ![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)
 ![Flask](https://img.shields.io/badge/Flask-3.0+-green.svg)
 ![SQLite](https://img.shields.io/badge/SQLite-3-orange.svg)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Online-success?style=flat&logo=render)](https://finanzapp-i59z.onrender.com)
 
 ## 🚀 Key Features
 
