@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-# routes/prestamos.py - Rutas para gestión de Préstamos
+# routes/prestamos.py - Loan management routes
 from flask import request, redirect, url_for
 from database import get_db_connection
 from . import prestamos_bp
 
 @prestamos_bp.route('/agregar_prestamo', methods=['POST'])
 def agregar_prestamo():
-    """Agregar nuevo préstamo"""
+    """Add new loan"""
     try:
         nombre = request.form['nombre']
         monto_mensual = float(request.form['monto_mensual'])
@@ -26,17 +26,17 @@ def agregar_prestamo():
         conn.commit()
         conn.close()
 
-        print(f"[PRESTAMO] Agregado: {nombre} - ${monto_mensual:.2f}/mes (Día {dia_pago})")
+        print(f"[LOAN] Added: {nombre} - ${monto_mensual:.2f}/month (Day {dia_pago})")
         return redirect(url_for('home'))
 
     except Exception as e:
-        print(f"[ERROR] Error al agregar préstamo: {e}")
+        print(f"[ERROR] Error adding loan: {e}")
         return redirect(url_for('home'))
 
 
 @prestamos_bp.route('/desactivar_prestamo/<int:id>')
 def desactivar_prestamo(id):
-    """Desactivar préstamo"""
+    """Deactivate loan"""
     try:
         conn = get_db_connection()
         c = conn.cursor()
@@ -46,17 +46,17 @@ def desactivar_prestamo(id):
         conn.commit()
         conn.close()
 
-        print(f"[DESACTIVAR] Préstamo ID {id}")
+        print(f"[DEACTIVATE] Loan ID {id}")
         return redirect(url_for('home'))
 
     except Exception as e:
-        print(f"[ERROR] Error al desactivar préstamo: {e}")
+        print(f"[ERROR] Error deactivating loan: {e}")
         return redirect(url_for('home'))
 
 
 @prestamos_bp.route('/borrar_prestamo/<int:id>')
 def borrar_prestamo(id):
-    """Eliminar préstamo"""
+    """Delete loan"""
     try:
         conn = get_db_connection()
         c = conn.cursor()
@@ -66,9 +66,9 @@ def borrar_prestamo(id):
         conn.commit()
         conn.close()
 
-        print(f"[DELETE] Préstamo ID {id}")
+        print(f"[DELETE] Loan ID {id}")
         return redirect(url_for('home'))
 
     except Exception as e:
-        print(f"[ERROR] Error al borrar préstamo: {e}")
+        print(f"[ERROR] Error deleting loan: {e}")
         return redirect(url_for('home'))

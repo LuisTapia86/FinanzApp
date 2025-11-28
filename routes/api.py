@@ -1,4 +1,4 @@
-# routes/api.py - API endpoints para AJAX
+# routes/api.py - API endpoints for AJAX
 from flask import jsonify
 from datetime import datetime
 from database import get_db_connection
@@ -6,27 +6,27 @@ from . import api_bp
 
 @api_bp.route('/api/movimientos_mes_actual', methods=['GET'])
 def movimientos_mes_actual():
-    """Obtener movimientos del mes actual"""
+    """Get current month movements"""
     try:
         conn = get_db_connection()
         c = conn.cursor()
 
-        # Obtener el primer y último día del mes actual
+        # Get first and last day of current month
         hoy = datetime.now()
         primer_dia_mes = datetime(hoy.year, hoy.month, 1).strftime('%Y-%m-%d')
 
-        # Obtener balance inicial configurado
+        # Get configured initial balance
         c.execute('SELECT balance_inicial FROM configuracion WHERE id=1')
         balance_inicial_app = c.fetchone()['balance_inicial']
 
-        # Calcular saldo al inicio del mes (balance inicial + movimientos hasta fin del mes anterior)
-        # Ingresos hasta fin del mes anterior
+        # Calculate balance at start of month (initial balance + movements until end of previous month)
+        # Income until end of previous month
         c.execute('''SELECT COALESCE(SUM(monto), 0) as total
                      FROM ingresos
                      WHERE fecha < ?''', (primer_dia_mes,))
         ingresos_previos = c.fetchone()['total']
 
-        # Gastos hasta fin del mes anterior
+        # Expenses until end of previous month
         c.execute('''SELECT COALESCE(SUM(monto), 0) as total
                      FROM gastos
                      WHERE fecha < ?''', (primer_dia_mes,))
@@ -34,19 +34,19 @@ def movimientos_mes_actual():
 
         saldo_inicio_mes = balance_inicial_app + ingresos_previos - gastos_previos
 
-        # Obtener ingresos del mes actual
+        # Get current month income
         c.execute('''SELECT COALESCE(SUM(monto), 0) as total
                      FROM ingresos
                      WHERE strftime('%Y-%m', fecha) = strftime('%Y-%m', 'now')''')
         ingresos_mes = c.fetchone()['total']
 
-        # Obtener gastos del mes actual
+        # Get current month expenses
         c.execute('''SELECT COALESCE(SUM(monto), 0) as total
                      FROM gastos
                      WHERE strftime('%Y-%m', fecha) = strftime('%Y-%m', 'now')''')
         gastos_mes = c.fetchone()['total']
 
-        # Saldo actual
+        # Current balance
         saldo_actual = saldo_inicio_mes + ingresos_mes - gastos_mes
 
         conn.close()
