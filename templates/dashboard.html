@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -286,17 +286,17 @@
 <body>
     <div class="container" id="dashboardContent">
         <header>
-            <h1>📊 Dashboard Financiero</h1>
+            <h1>📊 Financial Dashboard</h1>
             <div class="header-actions">
-                <a href="/" class="btn">← Volver al Inicio</a>
-                <button onclick="exportToPDF()" class="btn btn-success">📥 Descargar PDF</button>
+                <a href="/" class="btn">← Back to Home</a>
+                <button onclick="exportToPDF()" class="btn btn-success">📥 Download PDF</button>
             </div>
         </header>
 
-        <!-- KPIs Principales -->
+        <!-- Main KPIs -->
         <div class="kpis">
             <div class="kpi-card">
-                <div class="kpi-label">Balance Actual</div>
+                <div class="kpi-label">Current Balance</div>
                 <div class="kpi-value" style="color: {% if balance_actual > 0 %}var(--success){% else %}var(--danger){% endif %}">
                     ${{ "{:,.2f}".format(balance_actual) }}
                 </div>
@@ -310,27 +310,27 @@
             </div>
 
             <div class="kpi-card">
-                <div class="kpi-label">Total Ingresos</div>
+                <div class="kpi-label">Total Income</div>
                 <div class="kpi-value kpi-positive">
                     ${{ "{:,.2f}".format(total_ingresos) }}
                 </div>
                 <div class="kpi-change" style="color: var(--text-secondary);">
-                    Registrados a la fecha
+                    Recorded to date
                 </div>
             </div>
 
             <div class="kpi-card">
-                <div class="kpi-label">Total Gastos</div>
+                <div class="kpi-label">Total Expenses</div>
                 <div class="kpi-value kpi-negative">
                     ${{ "{:,.2f}".format(total_gastos) }}
                 </div>
                 <div class="kpi-change" style="color: var(--text-secondary);">
-                    Registrados a la fecha
+                    Recorded to date
                 </div>
             </div>
 
             <div class="kpi-card">
-                <div class="kpi-label">Tasa de Ahorro</div>
+                <div class="kpi-label">Savings Rate</div>
                 <div class="kpi-value" style="color: var(--warning)">
                     {% if total_ingresos > 0 %}
                         {{ "{:.1f}".format(((total_ingresos - total_gastos) / total_ingresos) * 100) }}%
@@ -341,82 +341,82 @@
                 <div class="kpi-change" style="color: var(--text-secondary);">
                     {% if total_ingresos > 0 %}
                         {% if ((total_ingresos - total_gastos) / total_ingresos) * 100 > 20 %}
-                            ✅ Excelente
+                            ✅ Excellent
                         {% elif ((total_ingresos - total_gastos) / total_ingresos) * 100 > 10 %}
-                            ⚠️ Bueno
+                            ⚠️ Good
                         {% else %}
-                            ❌ Mejorable
+                            ❌ Needs Improvement
                         {% endif %}
                     {% endif %}
                 </div>
             </div>
         </div>
 
-        <!-- Gráficas -->
+        <!-- Charts -->
         <div class="charts-grid">
-            <!-- Ingresos vs Gastos Mensuales -->
+            <!-- Monthly Income vs Expenses -->
             <div class="chart-card">
-                <div class="chart-title">📈 Ingresos vs Gastos (Últimos 6 meses)</div>
+                <div class="chart-title">📈 Income vs Expenses (Last 6 months)</div>
                 <div class="chart-container">
                     <canvas id="ingresosGastosChart"></canvas>
                 </div>
             </div>
 
-            <!-- Proyección -->
+            <!-- Projection -->
             <div class="chart-card">
-                <div class="chart-title">🔮 Proyección de Saldo (Próximos 6 meses)</div>
+                <div class="chart-title">🔮 Balance Projection (Next 6 months)</div>
                 <div class="chart-container">
                     <canvas id="proyeccionChart"></canvas>
                 </div>
             </div>
 
-            <!-- Gastos por Tipo -->
+            <!-- Expenses by Type -->
             <div class="chart-card">
-                <div class="chart-title">🏷️ Distribución de Gastos por Tipo</div>
+                <div class="chart-title">🏷️ Expense Distribution by Type</div>
                 <div class="chart-container">
                     <canvas id="gastosTipoChart"></canvas>
                 </div>
             </div>
 
-            <!-- Compromisos Mensuales -->
+            <!-- Monthly Commitments -->
             <div class="chart-card">
-                <div class="chart-title">💳 Compromisos Mensuales Recurrentes</div>
+                <div class="chart-title">💳 Recurring Monthly Commitments</div>
                 <div class="chart-container">
                     <canvas id="compromisosChart"></canvas>
                 </div>
             </div>
         </div>
 
-        <!-- Gráficas de Categorías -->
+        <!-- Category Charts -->
         <div class="charts-grid">
-            <!-- Gastos por Categoría -->
+            <!-- Expenses by Category -->
             <div class="chart-card">
-                <div class="chart-title">📊 Gastos por Categoría</div>
+                <div class="chart-title">📊 Expenses by Category</div>
                 <div class="chart-container">
                     <canvas id="gastosCategoriaChart"></canvas>
                 </div>
             </div>
 
-            <!-- Ingresos por Categoría -->
+            <!-- Income by Category -->
             <div class="chart-card">
-                <div class="chart-title">💰 Ingresos por Categoría</div>
+                <div class="chart-title">💰 Income by Category</div>
                 <div class="chart-container">
                     <canvas id="ingresosCategoriaChart"></canvas>
                 </div>
             </div>
         </div>
 
-        <!-- Tablas de Datos -->
+        <!-- Data Tables -->
         <div class="tables-grid">
-            <!-- Top Gastos -->
+            <!-- Top Expenses -->
             <div class="table-card">
-                <div class="chart-title">💸 Top 5 Gastos Más Grandes</div>
+                <div class="chart-title">💸 Top 5 Largest Expenses</div>
                 <table>
                     <thead>
                         <tr>
-                            <th>Concepto</th>
-                            <th>Monto</th>
-                            <th>Fecha</th>
+                            <th>Concept</th>
+                            <th>Amount</th>
+                            <th>Date</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -431,14 +431,14 @@
                 </table>
             </div>
 
-            <!-- Ingresos Recurrentes -->
+            <!-- Recurring Income -->
             <div class="table-card">
-                <div class="chart-title">💰 Ingresos Recurrentes Activos</div>
+                <div class="chart-title">💰 Active Recurring Income</div>
                 <table>
                     <thead>
                         <tr>
-                            <th>Concepto</th>
-                            <th>Monto Mensual</th>
+                            <th>Concept</th>
+                            <th>Monthly Amount</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -452,14 +452,14 @@
                 </table>
             </div>
 
-            <!-- Créditos Activos -->
+            <!-- Active Credits -->
             <div class="table-card">
-                <div class="chart-title">💳 Créditos/Tarjetas Activas</div>
+                <div class="chart-title">💳 Active Credits/Cards</div>
                 <table>
                     <thead>
                         <tr>
-                            <th>Concepto</th>
-                            <th>Pago Mensual</th>
+                            <th>Concept</th>
+                            <th>Monthly Payment</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -473,15 +473,15 @@
                 </table>
             </div>
 
-            <!-- MSI Activos -->
+            <!-- Active MSI -->
             <div class="table-card">
-                <div class="chart-title">🛒 Compras MSI Activas</div>
+                <div class="chart-title">🛒 Active MSI Purchases</div>
                 <table>
                     <thead>
                         <tr>
-                            <th>Producto</th>
-                            <th>Mensualidad</th>
-                            <th>Meses Rest.</th>
+                            <th>Product</th>
+                            <th>Monthly Payment</th>
+                            <th>Remaining Mo.</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -517,14 +517,14 @@
             data: {
                 labels: ingresosData.map(d => d.mes || d[0]).reverse(),
                 datasets: [{
-                    label: 'Ingresos',
+                    label: 'Income',
                     data: ingresosData.map(d => d.total || d[1]).reverse(),
                     backgroundColor: 'rgba(16, 185, 129, 0.7)',
                     borderColor: 'rgba(16, 185, 129, 1)',
                     borderWidth: 2,
                     borderRadius: 8
                 }, {
-                    label: 'Gastos',
+                    label: 'Expenses',
                     data: gastosData.map(d => d.total || d[1]).reverse(),
                     backgroundColor: 'rgba(239, 68, 68, 0.7)',
                     borderColor: 'rgba(239, 68, 68, 1)',
@@ -575,7 +575,7 @@
                     return label;
                 }),
                 datasets: [{
-                    label: 'Saldo Estimado',
+                    label: 'Estimated Balance',
                     data: proyeccionDataLimited.map(d => d.saldo_estimado),
                     backgroundColor: 'rgba(99, 102, 241, 0.2)',
                     borderColor: 'rgba(99, 102, 241, 1)',
@@ -606,9 +606,9 @@
                             label: function(context) {
                                 const data = proyeccionDataLimited[context.dataIndex];
                                 return [
-                                    `Saldo: $${context.parsed.y.toLocaleString('es-MX', {minimumFractionDigits: 2})}`,
-                                    `Ingresos: $${data.ingresos.toLocaleString('es-MX', {minimumFractionDigits: 2})}`,
-                                    `Pagos: $${data.pagos.toLocaleString('es-MX', {minimumFractionDigits: 2})}`
+                                    `Balance: $${context.parsed.y.toLocaleString('es-MX', {minimumFractionDigits: 2})}`,
+                                    `Income: $${data.ingresos.toLocaleString('es-MX', {minimumFractionDigits: 2})}`,
+                                    `Payments: $${data.pagos.toLocaleString('es-MX', {minimumFractionDigits: 2})}`
                                 ];
                             }
                         }
@@ -685,9 +685,9 @@
         new Chart(ctxCompromisos, {
             type: 'bar',
             data: {
-                labels: ['Ingresos Recurrentes', 'Créditos/Tarjetas', 'MSI'],
+                labels: ['Recurring Income', 'Credits/Cards', 'MSI'],
                 datasets: [{
-                    label: 'Monto Mensual',
+                    label: 'Monthly Amount',
                     data: [totalIngresosRec, totalCreditos, totalMsi],
                     backgroundColor: [
                         'rgba(16, 185, 129, 0.7)',
@@ -773,7 +773,7 @@
                     }
                 });
             })
-            .catch(error => console.error('Error cargando gastos por categoría:', error));
+            .catch(error => console.error('Error loading expenses by category:', error));
 
         // 6. Gráfica de Ingresos por Categoría
         fetch('/api/reportes/ingresos_por_categoria')
@@ -820,13 +820,13 @@
                     }
                 });
             })
-            .catch(error => console.error('Error cargando ingresos por categoría:', error));
+            .catch(error => console.error('Error loading income by category:', error));
 
         // Función para exportar a PDF
         async function exportToPDF() {
             const button = event.target;
             button.disabled = true;
-            button.textContent = '⏳ Generando PDF...';
+            button.textContent = '⏳ Generating PDF...';
 
             try {
                 const element = document.getElementById('dashboardContent');
@@ -860,12 +860,12 @@
                 pdf.save(`dashboard-financiero-${fecha}.pdf`);
 
                 button.disabled = false;
-                button.textContent = '📥 Descargar PDF';
+                button.textContent = '📥 Download PDF';
             } catch (error) {
-                console.error('Error al generar PDF:', error);
-                alert('Error al generar el PDF. Por favor, intenta de nuevo.');
+                console.error('Error generating PDF:', error);
+                alert('Error generating PDF. Please try again.');
                 button.disabled = false;
-                button.textContent = '📥 Descargar PDF';
+                button.textContent = '📥 Download PDF';
             }
         }
     </script>

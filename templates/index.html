@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
-    <title>FinanzApp - Pronóstico Financiero</title>
+    <title>FinanzApp - Financial Forecast</title>
     <style>
       :root {
         /* Paleta profesional y sobria */
@@ -874,7 +874,7 @@
   </head>
   <body>
     <div class="container">
-      <h1>💰 Pronóstico Financiero</h1>
+      <h1>💰 Financial Forecast</h1>
 
       <!-- MENSAJES FLASH -->
       {% with messages = get_flashed_messages(with_categories=true) %}
@@ -909,7 +909,7 @@
               font-weight: 600;
               transition: all 0.3s;
             ">
-            📅 Todo el tiempo
+            📅 All Time
           </button>
           <button
             id="btnEsteMes"
@@ -924,7 +924,7 @@
               font-weight: 600;
               transition: all 0.3s;
             ">
-            📆 Este mes
+            📆 This Month
           </button>
         </div>
       </div>
@@ -943,8 +943,8 @@
           style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px"
         >
           <div>
-            <div style="font-size: 0.8em; opacity: 0.8">💵 Saldo inicial</div>
-            <div id="labelPeriodoInicial" style="font-size: 0.7em; opacity: 0.7; margin-bottom: 5px;">(Al comenzar a usar la app)</div>
+            <div style="font-size: 0.8em; opacity: 0.8">💵 Initial Balance</div>
+            <div id="labelPeriodoInicial" style="font-size: 0.7em; opacity: 0.7; margin-bottom: 5px;">(When starting to use the app)</div>
             <div id="saldoInicial" style="font-size: 2em; font-weight: bold">
               ${{ "%.2f"|format(balance_inicial) }}
             </div>
@@ -960,7 +960,7 @@
                 margin-top: 5px;
               "
             >
-              ✏️ Editar
+              ✏️ Edit
             </button>
             <button
               onclick="abrirVistaQuincenal()"
@@ -974,14 +974,14 @@
                 margin-top: 5px;
               "
             >
-              📊 Vista {% if vista_quincenal == 1 %}Quincenal ✓{% else %}Mensual{% endif %}
+              📊 View {% if vista_quincenal == 1 %}Biweekly ✓{% else %}Monthly{% endif %}
             </button>
           </div>
           <div>
             <div style="font-size: 0.8em; opacity: 0.8">
-              📊 Movimientos registrados
+              📊 Recorded Transactions
             </div>
-            <div id="labelPeriodoMovimientos" style="font-size: 0.7em; opacity: 0.7; margin-bottom: 5px;">(Hasta hoy)</div>
+            <div id="labelPeriodoMovimientos" style="font-size: 0.7em; opacity: 0.7; margin-bottom: 5px;">(Up to today)</div>
             <div id="totalIngresos" style="font-size: 1.2em; font-weight: 700; color: #d1fae5; text-shadow: 0 1px 2px rgba(0,0,0,0.3);">
               +${{ "%.2f"|format(total_ingresos) }}
             </div>
@@ -990,8 +990,8 @@
             </div>
           </div>
           <div style="text-align: right">
-            <div style="font-size: 0.8em; opacity: 0.8">💰 Saldo actual</div>
-            <div id="labelPeriodoActual" style="font-size: 0.7em; opacity: 0.7; margin-bottom: 5px;">(A día de hoy)</div>
+            <div style="font-size: 0.8em; opacity: 0.8">💰 Current Balance</div>
+            <div id="labelPeriodoActual" style="font-size: 0.7em; opacity: 0.7; margin-bottom: 5px;">(As of today)</div>
             <div id="saldoActual" style="font-size: 2.5em; font-weight: bold">
               ${{ "%.2f"|format(balance) }}
             </div>
@@ -1003,10 +1003,10 @@
       {% if vista_quincenal == 1 and proyeccion_quincenal %}
       <div style="background: rgba(15, 23, 42, 0.85); border: 2px solid rgba(99, 102, 241, 0.5); border-radius: 15px; padding: 20px; margin-bottom: 30px;">
         <h2 style="color: #818cf8; margin-bottom: 15px">
-          📊 Proyección Quincenal Personalizada
+          📊 Custom Biweekly Projection
         </h2>
         <p style="color: #94a3b8; font-size: 0.9em; margin-bottom: 15px;">
-          Fechas de pago: día {{ fecha_pago_1 }} y {{ fecha_pago_2 }} de cada mes
+          Payment dates: day {{ fecha_pago_1 }} and {{ fecha_pago_2 }} of each month
         </p>
 
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; max-height: 600px; overflow-y: auto; padding: 10px;">
@@ -1016,21 +1016,21 @@
               {% if q.estado == 'verde' %}🟢{% elif q.estado == 'amarillo' %}🟡{% else %}🔴{% endif %} {{ q.quincena }}
             </div>
             <div class="mes-dato" style="color: #4caf50; font-size: 0.85em;">
-              +Ingresos: ${{ "%.2f"|format(q.ingresos) }}
+              +Income: ${{ "%.2f"|format(q.ingresos) }}
             </div>
             <div class="mes-dato" style="color: #f44336; font-size: 0.85em;">
-              -Pagos: ${{ "%.2f"|format(q.pagos) }}
+              -Payments: ${{ "%.2f"|format(q.pagos) }}
             </div>
             <div class="saldo-grande" style="font-size: 1.3em;">
               ${{ "%.2f"|format(q.saldo_estimado) }}
             </div>
             <div class="mes-dato" style="font-weight: 600; font-size: 0.85em;">
               {% if q.estado == 'verde' %}
-                ✅ Excelente
+                ✅ Excellent
               {% elif q.estado == 'amarillo' %}
-                ⚠️ Ajustado
+                ⚠️ Tight
               {% else %}
-                ❌ En riesgo
+                ❌ At Risk
               {% endif %}
             </div>
           </div>
@@ -1039,7 +1039,7 @@
 
         <div style="margin-top: 15px; text-align: center;">
           <small style="color: #94a3b8;">
-            Mostrando {{ proyeccion_quincenal|length }} quincenas ({{ (proyeccion_quincenal|length / 2)|int }} meses)
+            Showing {{ proyeccion_quincenal|length }} periods ({{ (proyeccion_quincenal|length / 2)|int }} months)
           </small>
         </div>
       </div>
@@ -1057,7 +1057,7 @@
         "
       >
         <h2 style="color: #818cf8; margin-bottom: 15px">
-          🔔 Próximos Pagos (15 días)
+          🔔 Upcoming Payments (15 days)
         </h2>
         <div style="display: grid; gap: 10px">
           {% for alerta in alertas %}
@@ -1074,9 +1074,9 @@
                   style="background: {% if alerta.urgencia == 'urgente' %}#dc2626{% elif alerta.urgencia == 'proximo' %}#d97706{% else %}#059669{% endif %};
                                          color: #f1f5f9; padding: 3px 10px; border-radius: 5px; font-size: 0.85em; font-weight: bold;"
                 >
-                  {% if alerta.dias_restantes == 0 %}¡HOY! {% elif
-                  alerta.dias_restantes == 1 %}MAÑANA {% else %}En {{
-                  alerta.dias_restantes }} días{% endif %}
+                  {% if alerta.dias_restantes == 0 %}TODAY! {% elif
+                  alerta.dias_restantes == 1 %}TOMORROW {% else %}In {{
+                  alerta.dias_restantes }} days{% endif %}
                 </span>
                 <span style="margin-left: 10px; color: #cbd5e1;">
                   📅 {{ alerta.fecha_pago.strftime('%d/%m/%Y') }}
@@ -1102,10 +1102,10 @@
       <!-- ACCIONES PRINCIPALES -->
       <div class="acciones-principales">
         <a href="/dashboard" class="btn-principal" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border-color: rgba(59, 130, 246, 0.5); text-decoration: none; display: flex; align-items: center; justify-content: center;">
-          📊 VER DASHBOARD
+          📊 VIEW DASHBOARD
         </a>
         <button class="btn-principal btn-simulador" onclick="abrirSimulador()">
-          🛒 SIMULAR COMPRA
+          🛒 SIMULATE PURCHASE
         </button>
         <button
           class="btn-principal"
@@ -1115,31 +1115,31 @@
           "
           onclick="abrirIngresoRecurrente()"
         >
-          💰 Ingreso Recurrente
+          💰 Recurring Income
         </button>
         <button
           class="btn-principal btn-prestamo"
           onclick="abrirRegistroCredito()"
         >
-          💳 Agregar Préstamo
+          💳 Add Loan
         </button>
         <button
           class="btn-principal btn-tarjeta"
           onclick="abrirRegistroTarjeta()"
         >
-          💳 Agregar Tarjeta de Crédito
+          💳 Add Credit Card
         </button>
         <button
           class="btn-principal btn-ingreso"
           onclick="abrirRegistroIngreso()"
         >
-          💵 Registrar Ingreso
+          💵 Record Income
         </button>
         <button
           class="btn-principal btn-gasto"
           onclick="abrirRegistroGasto()"
         >
-          💳 Registrar Nuevo Gasto
+          💳 Record New Expense
         </button>
       </div>
 
@@ -1153,9 +1153,9 @@
           margin-bottom: 40px;
         "
       >
-        <!-- INGRESOS -->
+        <!-- INCOME -->
         <div class="section" style="margin: 0">
-          <h2>📊 Ingresos Recientes</h2>
+          <h2>📊 Recent Income</h2>
           {% if ingresos %}
           <div style="max-height: 300px; overflow-y: auto">
             {% for ingreso in ingresos %}
@@ -1187,7 +1187,7 @@
                   border-radius: 5px;
                   font-size: 0.9em;
                 "
-                onclick="return confirm('¿Borrar este ingreso?')"
+                onclick="return confirm('Delete this income entry?')"
               >
                 🗑️
               </a>
@@ -1195,13 +1195,13 @@
             {% endfor %}
           </div>
           {% else %}
-          <p style="color: #94a3b8">No hay ingresos registrados aún.</p>
+          <p style="color: #94a3b8">No income entries recorded yet.</p>
           {% endif %}
         </div>
 
         <!-- GASTOS RECIENTES (solo efectivo/transferencia ya pagados) -->
         <div class="section" style="margin: 0">
-          <h2>💵 Gastos Recientes</h2>
+          <h2>💵 Recent Expenses</h2>
           {% if gastos %}
           <div style="max-height: 450px; overflow-y: auto">
             {% for gasto in gastos %}
@@ -1238,7 +1238,7 @@
                   border-radius: 5px;
                   font-size: 0.9em;
                 "
-                onclick="return confirm('¿Borrar este gasto?')"
+                onclick="return confirm('Delete this expense?')"
               >
                 🗑️
               </a>
@@ -1246,13 +1246,13 @@
             {% endfor %}
           </div>
           {% else %}
-          <p style="color: #94a3b8">No hay gastos en efectivo registrados.</p>
+          <p style="color: #94a3b8">No cash expenses recorded.</p>
           {% endif %}
         </div>
 
         <!-- PAGOS PENDIENTES DE TARJETA -->
         <div class="section" style="margin: 20px 0 0 0">
-          <h2>💳 Pagos Pendientes de Tarjeta</h2>
+          <h2>💳 Pending Card Payments</h2>
           {% if gastos_tdc %}
           <div style="max-height: 450px; overflow-y: auto">
             {% set current_tarjeta = namespace(nombre='') %}
@@ -1264,7 +1264,7 @@
                 <!-- Cerrar grupo anterior si no es el primero -->
                 {% if current_tarjeta.nombre != '' %}
                   <div style="padding: 8px; background: rgba(156, 39, 176, 0.15); border-top: 1px solid rgba(156, 39, 176, 0.3); margin-top: -5px; border-radius: 0 0 5px 5px; font-weight: bold; color: #9c27b0;">
-                    Total a pagar: ${{ "%.2f"|format(tarjeta_total.valor) }}
+                    Total to pay: ${{ "%.2f"|format(tarjeta_total.valor) }}
                   </div>
                   </div>
                 {% endif %}
@@ -1277,7 +1277,7 @@
                   <div style="background: rgba(156, 39, 176, 0.2); padding: 10px; border-radius: 5px 5px 0 0; border: 1px solid rgba(156, 39, 176, 0.4); border-bottom: none;">
                     <strong style="color: #9c27b0; font-size: 1.1em;">💳 {{ gasto_tdc['tarjeta_nombre'] }}</strong>
                     <br>
-                    <small style="color: #94a3b8;">Pago estimado: día {{ gasto_tdc['fecha_pago_estimada'] }} de cada mes</small>
+                    <small style="color: #94a3b8;">Estimated payment: day {{ gasto_tdc['fecha_pago_estimada'] }} of each month</small>
                   </div>
               {% endif %}
 
@@ -1290,13 +1290,13 @@
                   <span style="color: #e2e8f0;">{{ gasto_tdc['concepto'] }}</span>
                   <span style="color: #f44336; font-weight: bold; margin-left: 10px;">${{ "%.2f"|format(gasto_tdc['monto']) }}</span>
                   <br>
-                  <small style="color: #94a3b8;">Corte: {{ gasto_tdc['fecha'] }}</small>
+                  <small style="color: #94a3b8;">Cut-off: {{ gasto_tdc['fecha'] }}</small>
                 </div>
                 <a
                   href="/borrar_gasto_tdc/{{ gasto_tdc['id'] }}"
                   class="btn-delete"
                   style="padding: 5px 10px; text-decoration: none; border-radius: 5px; font-size: 0.9em;"
-                  onclick="return confirm('¿Borrar este cargo?')"
+                  onclick="return confirm('Delete this charge?')"
                 >
                   🗑️
                 </a>
@@ -1305,37 +1305,37 @@
               <!-- Si es el último elemento, cerrar el grupo -->
               {% if loop.last %}
                 <div style="padding: 8px; background: rgba(156, 39, 176, 0.15); border: 1px solid rgba(156, 39, 176, 0.3); border-top: none; margin-top: -1px; border-radius: 0 0 5px 5px; font-weight: bold; color: #9c27b0;">
-                  Total a pagar: ${{ "%.2f"|format(tarjeta_total.valor) }}
+                  Total to pay: ${{ "%.2f"|format(tarjeta_total.valor) }}
                 </div>
                 </div>
               {% endif %}
             {% endfor %}
           </div>
           {% else %}
-          <p style="color: #94a3b8">No hay pagos pendientes de tarjeta.</p>
+          <p style="color: #94a3b8">No pending card payments.</p>
           {% endif %}
         </div>
       </div>
 
       <!-- PRÉSTAMOS -->
       <div class="section">
-        <h2>💳 Préstamos</h2>
+        <h2>💳 Loans</h2>
         {% if prestamos %}
         <table>
           <tr>
-            <th>Nombre</th>
-            <th>Mensualidad</th>
-            <th>Día de Pago</th>
-            <th>Vigencia</th>
-            <th>Acciones</th>
+            <th>Name</th>
+            <th>Monthly Payment</th>
+            <th>Payment Day</th>
+            <th>Validity</th>
+            <th>Actions</th>
           </tr>
           {% for prestamo in prestamos %}
           <tr>
-            <td data-label="Nombre">{{ prestamo['nombre'] }}</td>
-            <td data-label="Mensualidad">${{ "%.2f"|format(prestamo['monto_mensual']) }}</td>
-            <td data-label="Día de Pago">Día {{ prestamo['dia_pago'] }}</td>
-            <td data-label="Vigencia">{{ prestamo['fecha_inicio'] }} - {{ prestamo['fecha_fin'] }}</td>
-            <td data-label="Acciones">
+            <td data-label="Name">{{ prestamo['nombre'] }}</td>
+            <td data-label="Monthly Payment">${{ "%.2f"|format(prestamo['monto_mensual']) }}</td>
+            <td data-label="Payment Day">Day {{ prestamo['dia_pago'] }}</td>
+            <td data-label="Validity">{{ prestamo['fecha_inicio'] }} - {{ prestamo['fecha_fin'] }}</td>
+            <td data-label="Actions">
               <a
                 href="/desactivar_prestamo/{{ prestamo['id'] }}"
                 class="btn-delete"
@@ -1347,9 +1347,9 @@
                   border-radius: 5px;
                   font-size: 0.9em;
                 "
-                onclick="return confirm('¿Liquidaste este préstamo?')"
+                onclick="return confirm('Did you pay off this loan?')"
               >
-                💰 Liquidar
+                💰 Pay Off
               </a>
               <a
                 href="/borrar_prestamo/{{ prestamo['id'] }}"
@@ -1360,9 +1360,9 @@
                   border-radius: 5px;
                   font-size: 0.9em;
                 "
-                onclick="return confirm('¿Seguro que quieres BORRAR este préstamo?')"
+                onclick="return confirm('Are you sure you want to DELETE this loan?')"
               >
-                🗑️ Borrar
+                🗑️ Delete
               </a>
             </td>
           </tr>
@@ -1370,13 +1370,13 @@
         </table>
         {% else %}
         <p>
-          No hay préstamos activos.
+          No active loans.
           <button
             class="btn-principal"
             onclick="abrirRegistroPrestamo()"
             style="display: inline-block; padding: 10px 20px; margin-left: 10px"
           >
-            ➕ Agregar Préstamo
+            ➕ Add Loan
           </button>
         </p>
         {% endif %}
@@ -1384,23 +1384,23 @@
 
       <!-- TARJETAS DE CRÉDITO -->
       <div class="section">
-        <h2>💳 Tarjetas de Crédito</h2>
+        <h2>💳 Credit Cards</h2>
         {% if tarjetas %}
         <table>
           <tr>
-            <th>Nombre</th>
-            <th>Fecha Corte</th>
-            <th>Fecha Pago</th>
-            <th>Límite</th>
-            <th>Acciones</th>
+            <th>Name</th>
+            <th>Cut-off Date</th>
+            <th>Payment Date</th>
+            <th>Limit</th>
+            <th>Actions</th>
           </tr>
           {% for tarjeta in tarjetas %}
           <tr>
-            <td data-label="Nombre">{{ tarjeta['nombre'] }}</td>
-            <td data-label="Fecha Corte">Día {{ tarjeta['fecha_corte'] }}</td>
-            <td data-label="Fecha Pago">Día {{ tarjeta['fecha_pago_estimada'] }}</td>
-            <td data-label="Límite">${{ "%.2f"|format(tarjeta['limite_credito']) }}</td>
-            <td data-label="Acciones">
+            <td data-label="Name">{{ tarjeta['nombre'] }}</td>
+            <td data-label="Cut-off Date">Day {{ tarjeta['fecha_corte'] }}</td>
+            <td data-label="Payment Date">Day {{ tarjeta['fecha_pago_estimada'] }}</td>
+            <td data-label="Limit">${{ "%.2f"|format(tarjeta['limite_credito']) }}</td>
+            <td data-label="Actions">
               <button
                 class="btn-principal"
                 onclick="abrirGastosTDC({{ tarjeta['id'] }}, '{{ tarjeta['nombre'] }}')"
@@ -1411,7 +1411,7 @@
                   margin-right: 5px;
                 "
               >
-                📝 Ver Gastos
+                📝 View Expenses
               </button>
               <a
                 href="/desactivar_tarjeta/{{ tarjeta['id'] }}"
@@ -1424,9 +1424,9 @@
                   border-radius: 5px;
                   font-size: 0.9em;
                 "
-                onclick="return confirm('¿Desactivar esta tarjeta?')"
+                onclick="return confirm('Deactivate this card?')"
               >
-                ⏸️ Desactivar
+                ⏸️ Deactivate
               </a>
               <a
                 href="/borrar_tarjeta/{{ tarjeta['id'] }}"
@@ -1437,9 +1437,9 @@
                   border-radius: 5px;
                   font-size: 0.9em;
                 "
-                onclick="return confirm('¿Seguro que quieres BORRAR esta tarjeta y todos sus gastos?')"
+                onclick="return confirm('Are you sure you want to DELETE this card and all its expenses?')"
               >
-                🗑️ Borrar
+                🗑️ Delete
               </a>
             </td>
           </tr>
@@ -1447,13 +1447,13 @@
         </table>
         {% else %}
         <p>
-          No hay tarjetas de crédito registradas.
+          No credit cards registered.
           <button
             class="btn-principal"
             onclick="abrirRegistroTarjeta()"
             style="display: inline-block; padding: 10px 20px; margin-left: 10px"
           >
-            ➕ Agregar Tarjeta
+            ➕ Add Card
           </button>
         </p>
         {% endif %}
@@ -1461,29 +1461,29 @@
 
       <!-- INGRESOS RECURRENTES -->
       <div class="section">
-        <h2>💰 Ingresos Recurrentes (Quincenas/Nomina)</h2>
+        <h2>💰 Recurring Income (Biweekly/Payroll)</h2>
         {% if ingresos_recurrentes %}
         <table>
           <tr>
-            <th>Nombre</th>
-            <th>Monto</th>
-            <th>Día de Pago</th>
-            <th>Vigencia</th>
-            <th>Estado</th>
-            <th>Acciones</th>
+            <th>Name</th>
+            <th>Amount</th>
+            <th>Payment Day</th>
+            <th>Validity</th>
+            <th>Status</th>
+            <th>Actions</th>
           </tr>
           {% for ing in ingresos_recurrentes %}
           <tr>
-            <td data-label="Nombre">{{ ing[1] }}</td>
-            <td data-label="Monto" style="color: #4caf50; font-weight: bold">
+            <td data-label="Name">{{ ing[1] }}</td>
+            <td data-label="Amount" style="color: #4caf50; font-weight: bold">
               ${{ "%.2f"|format(ing[2]) }}
             </td>
-            <td data-label="Día de Pago">Día {{ ing[3] }}</td>
-            <td data-label="Vigencia">{{ ing[4] }} - {{ ing[5] }}</td>
-            <td data-label="Estado">
-              {% if ing[6] == 1 %}✅ Activo{% else %}⏸️ Inactivo{% endif %}
+            <td data-label="Payment Day">Day {{ ing[3] }}</td>
+            <td data-label="Validity">{{ ing[4] }} - {{ ing[5] }}</td>
+            <td data-label="Status">
+              {% if ing[6] == 1 %}✅ Active{% else %}⏸️ Inactive{% endif %}
             </td>
-            <td data-label="Acciones">
+            <td data-label="Actions">
               {% if ing[6] == 1 %}
               <a
                 href="/desactivar_ingreso_recurrente/{{ ing[0] }}"
@@ -1496,9 +1496,9 @@
                   border-radius: 5px;
                   font-size: 0.9em;
                 "
-                onclick="return confirm('¿Desactivar este ingreso?')"
+                onclick="return confirm('Deactivate this income?')"
               >
-                ⏸️ Desactivar
+                ⏸️ Deactivate
               </a>
               {% endif %}
               <a
@@ -1510,9 +1510,9 @@
                   border-radius: 5px;
                   font-size: 0.9em;
                 "
-                onclick="return confirm('¿Seguro que quieres BORRAR este ingreso recurrente?')"
+                onclick="return confirm('Are you sure you want to DELETE this recurring income?')"
               >
-                🗑️ Borrar
+                🗑️ Delete
               </a>
             </td>
           </tr>
@@ -1520,7 +1520,7 @@
         </table>
         {% else %}
         <p>
-          No hay ingresos recurrentes configurados.
+          No recurring income configured.
           <button
             class="btn-principal"
             onclick="abrirIngresoRecurrente()"
@@ -1532,11 +1532,11 @@
               color: white;
             "
           >
-            ➕ Agregar Ingreso Recurrente
+            ➕ Add Recurring Income
           </button>
         </p>
         <small style="color: #94a3b8; display: block; margin-top: 10px">
-          💡 Aquí agregas tu nómina quincenal/mensual. Ejemplo: "Quincena día
+          💡 Add your biweekly/monthly payroll here. Example: "Paycheck day
           10" - $10,000
         </small>
         {% endif %}
@@ -1544,27 +1544,27 @@
 
       <!-- COMPRAS MSI -->
       <div class="section">
-        <h2>🛍️ Compras en MSI</h2>
+        <h2>🛍️ Interest-Free Purchases (MSI)</h2>
         {% if msis %}
         <table>
           <tr>
-            <th>Producto</th>
+            <th>Product</th>
             <th>Total</th>
-            <th>Mensualidad</th>
-            <th>Meses Restantes</th>
-            <th>Estado</th>
-            <th>Acciones</th>
+            <th>Monthly Payment</th>
+            <th>Remaining Months</th>
+            <th>Status</th>
+            <th>Actions</th>
           </tr>
           {% for msi in msis %}
           <tr>
-            <td data-label="Producto">{{ msi[1] }}</td>
+            <td data-label="Product">{{ msi[1] }}</td>
             <td data-label="Total">${{ "%.2f"|format(msi[2]) }}</td>
-            <td data-label="Mensualidad">${{ "%.2f"|format(msi[4]) }}</td>
-            <td data-label="Meses Restantes">{{ msi[6] }} de {{ msi[3] }}</td>
-            <td data-label="Estado">
-              {% if msi[7] == 1 %}✅ Activo{% else %}⏸️ Liquidado{% endif %}
+            <td data-label="Monthly Payment">${{ "%.2f"|format(msi[4]) }}</td>
+            <td data-label="Remaining Months">{{ msi[6] }} of {{ msi[3] }}</td>
+            <td data-label="Status">
+              {% if msi[7] == 1 %}✅ Active{% else %}⏸️ Paid Off{% endif %}
             </td>
-            <td data-label="Acciones">
+            <td data-label="Actions">
               {% if msi[7] == 1 %}
               <button
                 class="btn-delete"
@@ -1580,7 +1580,7 @@
                 "
                 onclick="abrirPagoAnticipado({{ msi[0] }}, '{{ msi[1] }}', {{ msi[6] }})"
               >
-                💵 Pago Anticipado
+                💵 Early Payment
               </button>
               <a
                 href="/desactivar_msi/{{ msi[0] }}"
@@ -1594,9 +1594,9 @@
                   font-size: 0.9em;
                   margin-right: 5px;
                 "
-                onclick="return confirm('¿Liquidaste completamente esta compra?')"
+                onclick="return confirm('Did you completely pay off this purchase?')"
               >
-                💰 Liquidar
+                💰 Pay Off
               </a>
               {% endif %}
               <a
@@ -1608,16 +1608,16 @@
                   border-radius: 5px;
                   font-size: 0.9em;
                 "
-                onclick="return confirm('¿Seguro que quieres BORRAR esta compra?')"
+                onclick="return confirm('Are you sure you want to DELETE this purchase?')"
               >
-                🗑️ Borrar
+                🗑️ Delete
               </a>
             </td>
           </tr>
           {% endfor %}
         </table>
         {% else %}
-        <p>No hay compras en MSI activas.</p>
+        <p>No active interest-free purchases.</p>
         {% endif %}
       </div>
     </div>
@@ -1625,7 +1625,7 @@
     <!-- BOTÓN HISTORIAL DE SIMULACIONES -->
     <div style="margin-top: 20px; text-align: center;">
       <button onclick="abrirHistorial()" class="btn-submit" style="background: var(--primary-gradient); padding: 15px 30px; font-size: 1.1em;">
-        📋 VER HISTORIAL DE SIMULACIONES
+        📋 VIEW SIMULATION HISTORY
       </button>
     </div>
 
@@ -1633,20 +1633,20 @@
     <div id="modalSimulador" class="modal">
       <div class="modal-content" style="max-width: 95%; width: 1200px;">
         <span class="close-modal" onclick="cerrarSimulador()">&times;</span>
-        <h2>🛒 Simulador de Compra</h2>
+        <h2>🛒 Purchase Simulator</h2>
 
         <div class="form-group">
-          <label>Producto:</label>
-          <input type="text" id="productoSim" placeholder="Ej: Laptop Lenovo" />
+          <label>Product:</label>
+          <input type="text" id="productoSim" placeholder="e.g., Lenovo Laptop" />
         </div>
 
         <div class="form-group">
-          <label>Precio:</label>
+          <label>Price:</label>
           <input type="number" id="precioSim" placeholder="35000" />
         </div>
 
         <div class="form-group">
-          <label>Meses Sin Intereses:</label>
+          <label>Interest-Free Months:</label>
           <select id="mesesSim">
             <option value="3">3 MSI</option>
             <option value="6">6 MSI</option>
@@ -1658,7 +1658,7 @@
         </div>
 
         <button class="btn-submit" onclick="simularCompra()">
-          CALCULAR IMPACTO
+          CALCULATE IMPACT
         </button>
 
         <div id="resultadoSim" class="resultado-simulacion"></div>
@@ -1669,21 +1669,21 @@
     <div id="modalCredito" class="modal">
       <div class="modal-content" style="max-width: 600px">
         <span class="close-modal" onclick="cerrarCredito()">&times;</span>
-        <h2>💳 Agregar Préstamo</h2>
+        <h2>💳 Add Loan</h2>
 
         <form action="/agregar_prestamo" method="POST">
           <div class="form-group">
-            <label>Nombre del Préstamo:</label>
+            <label>Loan Name:</label>
             <input
               type="text"
               name="nombre"
-              placeholder="Préstamo Personal, Crédito Automotriz, etc."
+              placeholder="Personal Loan, Car Credit, etc."
               required
             />
           </div>
 
           <div class="form-group">
-            <label>Monto Mensual:</label>
+            <label>Monthly Amount:</label>
             <input
               type="number"
               step="0.01"
@@ -1694,7 +1694,7 @@
           </div>
 
           <div class="form-group">
-            <label>Día de Pago (1-31):</label>
+            <label>Payment Day (1-31):</label>
             <input
               type="number"
               name="dia_pago"
@@ -1703,11 +1703,11 @@
               placeholder="15"
               required
             />
-            <small style="color: #94a3b8">Día del mes que debes hacer el pago</small>
+            <small style="color: #94a3b8">Day of the month when payment is due</small>
           </div>
 
           <div class="form-group">
-            <label>Alertarme X días antes:</label>
+            <label>Alert me X days before:</label>
             <input
               type="number"
               name="dias_alerta"
@@ -1715,28 +1715,28 @@
               max="30"
               value="10"
             />
-            <small style="color: #94a3b8">Días de anticipación para la alerta</small>
+            <small style="color: #94a3b8">Days in advance for the alert</small>
           </div>
 
           <h3 style="color: #667eea; margin: 20px 0 15px 0; font-size: 1.1em">
-            📆 Vigencia
+            📆 Validity Period
           </h3>
 
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px">
             <div class="form-group">
-              <label>Fecha Inicio:</label>
+              <label>Start Date:</label>
               <div id="fecha-inicio-credito"></div>
-              <small style="color: #94a3b8">Desde cuándo aplica este préstamo</small>
+              <small style="color: #94a3b8">When this loan starts</small>
             </div>
 
             <div class="form-group">
-              <label>Fecha Fin:</label>
+              <label>End Date:</label>
               <div id="fecha-fin-credito"></div>
-              <small style="color: #94a3b8">Hasta cuándo estarás pagando</small>
+              <small style="color: #94a3b8">Until when you will be paying</small>
             </div>
           </div>
 
-          <button type="submit" class="btn-submit">AGREGAR PRÉSTAMO</button>
+          <button type="submit" class="btn-submit">ADD LOAN</button>
         </form>
       </div>
     </div>
@@ -1745,21 +1745,21 @@
     <div id="modalPrestamo" class="modal">
       <div class="modal-content" style="max-width: 600px">
         <span class="close-modal" onclick="cerrarPrestamo()">&times;</span>
-        <h2>💳 Agregar Préstamo</h2>
+        <h2>💳 Add Loan</h2>
 
         <form action="/agregar_prestamo" method="POST">
           <div class="form-group">
-            <label>Nombre del Préstamo:</label>
+            <label>Loan Name:</label>
             <input
               type="text"
               name="nombre"
-              placeholder="Préstamo Personal, Crédito Automotriz, etc."
+              placeholder="Personal Loan, Car Credit, etc."
               required
             />
           </div>
 
           <div class="form-group">
-            <label>Monto Mensual:</label>
+            <label>Monthly Amount:</label>
             <input
               type="number"
               step="0.01"
@@ -1770,7 +1770,7 @@
           </div>
 
           <div class="form-group">
-            <label>Día de Pago (1-31):</label>
+            <label>Payment Day (1-31):</label>
             <input
               type="number"
               name="dia_pago"
@@ -1782,7 +1782,7 @@
           </div>
 
           <div class="form-group">
-            <label>Alertarme X días antes:</label>
+            <label>Alert me X days before:</label>
             <input
               type="number"
               name="dias_alerta"
@@ -1793,22 +1793,22 @@
           </div>
 
           <h3 style="color: #667eea; margin: 20px 0 15px 0; font-size: 1.1em">
-            📆 Vigencia
+            📆 Validity Period
           </h3>
 
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px">
             <div class="form-group">
-              <label>Fecha Inicio:</label>
+              <label>Start Date:</label>
               <div id="fecha-inicio-prestamo"></div>
             </div>
 
             <div class="form-group">
-              <label>Fecha Fin:</label>
+              <label>End Date:</label>
               <div id="fecha-fin-prestamo"></div>
             </div>
           </div>
 
-          <button type="submit" class="btn-submit">AGREGAR PRÉSTAMO</button>
+          <button type="submit" class="btn-submit">ADD LOAN</button>
         </form>
       </div>
     </div>
@@ -1817,22 +1817,22 @@
     <div id="modalTarjeta" class="modal">
       <div class="modal-content" style="max-width: 600px">
         <span class="close-modal" onclick="cerrarTarjeta()">&times;</span>
-        <h2>💳 Agregar Tarjeta de Crédito</h2>
+        <h2>💳 Add Credit Card</h2>
 
         <form action="/agregar_tarjeta" method="POST">
           <div class="form-group">
-            <label>Nombre de la Tarjeta:</label>
+            <label>Card Name:</label>
             <input
               type="text"
               name="nombre"
-              placeholder="BBVA Azul, Liverpool, Nu, etc."
+              placeholder="BBVA Blue, Liverpool, Nu, etc."
               required
             />
           </div>
 
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px">
             <div class="form-group">
-              <label>Fecha de Corte (Día):</label>
+              <label>Cut-off Date (Day):</label>
               <input
                 type="number"
                 name="fecha_corte"
@@ -1841,11 +1841,11 @@
                 placeholder="17"
                 required
               />
-              <small style="color: #94a3b8">Día que cierra el estado de cuenta</small>
+              <small style="color: #94a3b8">Day when statement closes</small>
             </div>
 
             <div class="form-group">
-              <label>Fecha de Pago Estimada (Día):</label>
+              <label>Estimated Payment Date (Day):</label>
               <input
                 type="number"
                 name="fecha_pago_estimada"
@@ -1854,12 +1854,12 @@
                 placeholder="3"
                 required
               />
-              <small style="color: #94a3b8">Día aproximado de pago</small>
+              <small style="color: #94a3b8">Approximate payment day</small>
             </div>
           </div>
 
           <div class="form-group">
-            <label>Límite de Crédito (opcional):</label>
+            <label>Credit Limit (optional):</label>
             <input
               type="number"
               step="0.01"
@@ -1868,7 +1868,7 @@
             />
           </div>
 
-          <button type="submit" class="btn-submit">AGREGAR TARJETA</button>
+          <button type="submit" class="btn-submit">ADD CARD</button>
         </form>
       </div>
     </div>
@@ -1877,35 +1877,35 @@
     <div id="modalGastosTDC" class="modal">
       <div class="modal-content" style="max-width: 800px">
         <span class="close-modal" onclick="cerrarGastosTDC()">&times;</span>
-        <h2 id="tituloGastosTDC">💳 Gastos de Tarjeta</h2>
+        <h2 id="tituloGastosTDC">💳 Card Expenses</h2>
 
         <!-- Formulario para agregar gasto -->
         <div style="background: rgba(59, 130, 246, 0.1); padding: 20px; border-radius: 10px; margin-bottom: 20px">
-          <h3 style="color: #3b82f6; margin-top: 0">➕ Agregar Nuevo Gasto</h3>
+          <h3 style="color: #3b82f6; margin-top: 0">➕ Add New Expense</h3>
           <form action="/agregar_gasto_tdc" method="POST">
             <input type="hidden" name="tarjeta_id" id="tarjeta_id_input" />
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px">
               <div class="form-group">
-                <label>Fecha:</label>
+                <label>Date:</label>
                 <input type="date" name="fecha" required />
               </div>
 
               <div class="form-group">
-                <label>Monto:</label>
+                <label>Amount:</label>
                 <input type="number" step="0.01" name="monto" placeholder="1500.00" required />
               </div>
             </div>
 
             <div class="form-group">
-              <label>Concepto:</label>
-              <input type="text" name="concepto" placeholder="Compra en Amazon" required />
+              <label>Concept:</label>
+              <input type="text" name="concepto" placeholder="Amazon purchase" required />
             </div>
 
             <div class="form-group">
-              <label>Categoría:</label>
+              <label>Category:</label>
               <select name="categoria_id">
-                <option value="">Sin categoría</option>
+                <option value="">No category</option>
                 {% for cat in categorias %}
                   {% if cat['tipo'] == 'gasto' %}
                   <option value="{{ cat['id'] }}">{{ cat['nombre'] }}</option>
@@ -1917,27 +1917,27 @@
             <div class="form-group">
               <label>
                 <input type="checkbox" id="es_msi_tdc" name="es_msi" value="1" onchange="toggleMSITDC()" />
-                ¿Es a Meses Sin Intereses (MSI)?
+                Is it Interest-Free Months (MSI)?
               </label>
             </div>
 
             <div id="msiFieldsTDC" style="display: none">
               <div class="form-group">
-                <label>Meses:</label>
+                <label>Months:</label>
                 <select name="meses_msi">
-                  <option value="3">3 meses</option>
-                  <option value="6">6 meses</option>
-                  <option value="9">9 meses</option>
-                  <option value="12">12 meses</option>
-                  <option value="18">18 meses</option>
-                  <option value="24">24 meses</option>
+                  <option value="3">3 months</option>
+                  <option value="6">6 months</option>
+                  <option value="9">9 months</option>
+                  <option value="12">12 months</option>
+                  <option value="18">18 months</option>
+                  <option value="24">24 months</option>
                 </select>
               </div>
             </div>
 
             <input type="hidden" name="tipo" id="tipo_gasto_tdc" value="corriente" />
 
-            <button type="submit" class="btn-submit">AGREGAR GASTO</button>
+            <button type="submit" class="btn-submit">ADD EXPENSE</button>
           </form>
         </div>
 
@@ -1962,13 +1962,13 @@
         <span class="close-modal" onclick="cerrarPagoAnticipado()"
           >&times;</span
         >
-        <h2>💵 Pago Anticipado</h2>
+        <h2>💵 Early Payment</h2>
 
         <p id="infoPagoAnticipado"></p>
 
         <form id="formPagoAnticipado" method="POST">
           <div class="form-group">
-            <label>¿Cuántos meses adelantaste?</label>
+            <label>How many months did you pay in advance?</label>
             <input
               type="number"
               name="meses_pagados"
@@ -1977,11 +1977,11 @@
               required
             />
             <small style="color: #94a3b8"
-              >Ej: Si pagaste 3 mensualidades adelantadas, pon 3</small
+              >e.g., If you paid 3 months in advance, enter 3</small
             >
           </div>
 
-          <button type="submit" class="btn-submit">REGISTRAR PAGO</button>
+          <button type="submit" class="btn-submit">RECORD PAYMENT</button>
         </form>
       </div>
     </div>
@@ -1990,25 +1990,25 @@
     <div id="modalGasto" class="modal">
       <div class="modal-content" style="max-width: 600px">
         <span class="close-modal" onclick="cerrarGasto()">&times;</span>
-        <h2>💳 Registrar Gasto</h2>
+        <h2>💳 Record Expense</h2>
 
         <form action="/agregar_gasto" method="POST" id="formGasto" onsubmit="return validarFormularioGasto()">
           <!-- CAMPO 1: Tipo de Pago (ahora es el primero) -->
           <div class="form-group">
-            <label>Tipo de Pago:</label>
+            <label>Payment Type:</label>
             <select name="tipo" id="tipoPagoGasto" required onchange="cambiarTipoPagoGasto()">
-              <option value="efectivo">💵 Efectivo/Transferencia/Débito</option>
-              <option value="tarjeta">💳 Tarjeta de Crédito</option>
+              <option value="efectivo">💵 Cash/Transfer/Debit</option>
+              <option value="tarjeta">💳 Credit Card</option>
             </select>
           </div>
 
           <!-- CAMPOS PARA EFECTIVO/TRANSFERENCIA -->
           <div id="camposEfectivo">
             <div class="form-group">
-              <label>Fecha del Pago:</label>
+              <label>Payment Date:</label>
               <div id="fecha-gasto"></div>
               <small style="color: #94a3b8; display: block; margin-top: 5px;">
-                Selecciona la fecha del pago (hoy o fecha futura planeada)
+                Select payment date (today or planned future date)
               </small>
             </div>
           </div>
@@ -2016,9 +2016,9 @@
           <!-- CAMPOS PARA TARJETA DE CRÉDITO -->
           <div id="camposTarjeta" style="display: none;">
             <div class="form-group">
-              <label>Selecciona la Tarjeta:</label>
+              <label>Select Card:</label>
               <select name="tarjeta_id" id="tarjetaGastoSelect" onchange="mostrarOpcionesCorte()">
-                <option value="">Selecciona una tarjeta...</option>
+                <option value="">Select a card...</option>
                 {% for tarjeta in tarjetas %}
                 <option value="{{ tarjeta['id'] }}"
                         data-fecha-corte="{{ tarjeta['fecha_corte'] }}"
@@ -2030,13 +2030,13 @@
             </div>
 
             <div class="form-group" id="opcionesCorte" style="display: none;">
-              <label>¿En qué corte aparece este gasto?</label>
+              <label>In which statement does this expense appear?</label>
               <select id="seleccionCorte" onchange="actualizarFechaCorte()">
-                <option value="proximo">📅 Próximo corte</option>
-                <option value="anterior">⏮️ Corte anterior (lo olvidé registrar)</option>
+                <option value="proximo">📅 Next cut-off</option>
+                <option value="anterior">⏮️ Previous cut-off (forgot to record it)</option>
               </select>
               <small style="color: #94a3b8; display: block; margin-top: 5px;" id="infoFechaCorte">
-                Se registrará en el próximo corte
+                Will be recorded in the next cut-off
               </small>
             </div>
 
@@ -2045,7 +2045,7 @@
             <div class="form-group" style="margin-top: 20px">
               <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
                 <input type="checkbox" name="es_msi" value="1" id="checkboxMSI" onchange="toggleMSI(this)">
-                <span>💳 Es compra a Meses Sin Intereses (MSI)</span>
+                <span>💳 It's an Interest-Free Months (MSI) purchase</span>
               </label>
             </div>
 
@@ -2053,55 +2053,55 @@
 
               <!-- Selector: ¿Qué dato tienes? -->
               <div class="form-group">
-                <label style="font-weight: bold; color: #6366f1;">¿Qué información tienes?</label>
+                <label style="font-weight: bold; color: #6366f1;">What information do you have?</label>
                 <select id="tipoCalculoMSI" onchange="cambiarTipoCalculoMSI()" style="width: 100%;">
-                  <option value="tengo_mensualidad">📊 Tengo la mensualidad (del estado de cuenta)</option>
-                  <option value="tengo_total">🛒 Tengo el precio total (compra nueva)</option>
+                  <option value="tengo_mensualidad">📊 I have the monthly payment (from statement)</option>
+                  <option value="tengo_total">🛒 I have the total price (new purchase)</option>
                 </select>
               </div>
 
               <!-- OPCIÓN 1: Tengo la mensualidad -->
               <div id="opcionMensualidad">
                 <div class="form-group">
-                  <label>Mensualidad (pago mensual):</label>
+                  <label>Monthly payment:</label>
                   <input
                     type="number"
                     step="0.01"
                     id="mensualidadMSI"
                     min="0.01"
-                    placeholder="Ej: 2250.00"
+                    placeholder="e.g., 2250.00"
                     style="width: 100%;"
                     oninput="calcularDesdeMensualidad()"
                   />
                   <small style="color: #94a3b8; display: block; margin-top: 5px;">
-                    Monto que pagas cada mes (como aparece en tu estado de cuenta)
+                    Amount you pay each month (as shown on your statement)
                   </small>
                 </div>
 
                 <div class="form-group">
-                  <label>Meses restantes (1-72):</label>
+                  <label>Remaining months (1-72):</label>
                   <input
                     type="number"
                     name="meses"
                     id="mesesRestantesMSI"
                     min="1"
                     max="72"
-                    placeholder="Ej: 4"
+                    placeholder="e.g., 4"
                     style="width: 100%;"
                     oninput="calcularDesdeMensualidad()"
                   />
                   <small style="color: #94a3b8; display: block; margin-top: 5px;">
-                    ¿Cuántas mensualidades te faltan por pagar?
+                    How many payments do you have left?
                   </small>
                 </div>
 
                 <div class="form-group" style="background: rgba(34, 197, 94, 0.1); padding: 10px; border-radius: 5px; border: 1px solid rgba(34, 197, 94, 0.3);">
-                  <label style="color: #22c55e; font-weight: bold;">📊 Total calculado:</label>
+                  <label style="color: #22c55e; font-weight: bold;">📊 Calculated total:</label>
                   <div id="totalCalculadoDesdeMensualidad" style="font-size: 1.3em; color: #22c55e; font-weight: bold;">
                     $0.00
                   </div>
                   <small style="color: #94a3b8; display: block; margin-top: 5px;">
-                    Mensualidad × Meses restantes = Total
+                    Monthly payment × Remaining months = Total
                   </small>
                 </div>
               </div>
@@ -2109,45 +2109,45 @@
               <!-- OPCIÓN 2: Tengo el precio total -->
               <div id="opcionTotal" style="display: none;">
                 <div class="form-group">
-                  <label>Precio total de la compra:</label>
+                  <label>Total purchase price:</label>
                   <input
                     type="number"
                     step="0.01"
                     id="totalCompraMSI"
                     min="0.01"
-                    placeholder="Ej: 9000.00"
+                    placeholder="e.g., 9000.00"
                     style="width: 100%;"
                     oninput="calcularDesdeTotal()"
                   />
                   <small style="color: #94a3b8; display: block; margin-top: 5px;">
-                    Precio total de la compra nueva
+                    Total price of the new purchase
                   </small>
                 </div>
 
                 <div class="form-group">
-                  <label>Número de meses (1-72):</label>
+                  <label>Number of months (1-72):</label>
                   <input
                     type="number"
                     name="meses"
                     id="mesesTotalesMSI"
                     min="1"
                     max="72"
-                    placeholder="Ej: 12"
+                    placeholder="e.g., 12"
                     style="width: 100%;"
                     oninput="calcularDesdeTotal()"
                   />
                   <small style="color: #94a3b8; display: block; margin-top: 5px;">
-                    ¿A cuántos meses la compraste?
+                    For how many months did you buy it?
                   </small>
                 </div>
 
                 <div class="form-group" style="background: rgba(34, 197, 94, 0.1); padding: 10px; border-radius: 5px; border: 1px solid rgba(34, 197, 94, 0.3);">
-                  <label style="color: #22c55e; font-weight: bold;">📊 Mensualidad calculada:</label>
+                  <label style="color: #22c55e; font-weight: bold;">📊 Calculated monthly payment:</label>
                   <div id="mensualidadCalculadaDesdeTotal" style="font-size: 1.3em; color: #22c55e; font-weight: bold;">
                     $0.00
                   </div>
                   <small style="color: #94a3b8; display: block; margin-top: 5px;">
-                    Total ÷ Meses = Mensualidad
+                    Total ÷ Months = Monthly payment
                   </small>
                 </div>
               </div>
@@ -2158,17 +2158,17 @@
 
           <!-- CAMPOS COMUNES PARA AMBOS TIPOS -->
           <div class="form-group">
-            <label>Concepto/Nombre:</label>
+            <label>Concept/Name:</label>
             <input
               type="text"
               name="nombre"
-              placeholder="Comida, Gasolina, Uber..."
+              placeholder="Food, Gas, Uber..."
               required
             />
           </div>
 
           <div class="form-group" id="campoMonto">
-            <label>Monto:</label>
+            <label>Amount:</label>
             <input
               type="number"
               step="0.01"
@@ -2179,14 +2179,14 @@
               min="0.01"
             />
             <small style="color: #94a3b8; display: block; margin-top: 5px;" id="ayudaMonto">
-              Para gastos normales, ingresa el monto total
+              For normal expenses, enter the total amount
             </small>
           </div>
 
           <div class="form-group">
-            <label>Categoría:</label>
+            <label>Category:</label>
             <select name="categoria_id">
-              <option value="">Sin categoría</option>
+              <option value="">No category</option>
               {% for cat in categorias %}
                 {% if cat['tipo'] == 'gasto' %}
                 <option value="{{ cat['id'] }}">{{ cat['nombre'] }}</option>
@@ -2196,7 +2196,7 @@
           </div>
 
           <button type="submit" class="btn-submit" style="margin-top: 20px;">
-            ➕ REGISTRAR GASTO
+            ➕ RECORD EXPENSE
           </button>
         </form>
       </div>
@@ -2210,18 +2210,17 @@
     >
       <div class="modal-content" style="max-width: 500px">
         <h2 style="color: #667eea; text-align: center">
-          ¡Bienvenido a FinanzApp! 🎉
+          Welcome to FinanzApp! 🎉
         </h2>
 
         <p style="text-align: center; color: #94a3b8; margin: 20px 0">
-          Para empezar, necesitamos saber cuánto dinero tienes disponible ahora
-          mismo.
+          To get started, we need to know how much money you have available right now.
         </p>
 
         <form action="/configurar_balance_inicial" method="POST">
           <div class="form-group">
             <label style="font-size: 1.2em"
-              >💵 ¿Cuánto dinero tienes ahora?</label
+              >💵 How much money do you have now?</label
             >
             <input
               type="number"
@@ -2241,7 +2240,7 @@
                 margin-top: 10px;
               "
             >
-              Esto es tu punto de partida. Puedes cambiarlo después.
+              This is your starting point. You can change it later.
             </small>
           </div>
 
@@ -2250,7 +2249,7 @@
             class="btn-submit"
             style="font-size: 1.2em; padding: 15px"
           >
-            🚀 EMPEZAR
+            🚀 START
           </button>
         </form>
       </div>
@@ -2260,15 +2259,15 @@
     <div id="modalEditarBalance" class="modal">
       <div class="modal-content">
         <span class="close-modal" onclick="cerrarEditarBalance()">&times;</span>
-        <h2>✏️ Editar Balance Inicial</h2>
+        <h2>✏️ Edit Initial Balance</h2>
 
         <p style="color: #94a3b8">
-          Balance actual: <strong>${{ "%.2f"|format(balance_inicial) }}</strong>
+          Current balance: <strong>${{ "%.2f"|format(balance_inicial) }}</strong>
         </p>
 
         <form action="/editar_balance_inicial" method="POST">
           <div class="form-group">
-            <label>Nuevo Balance Inicial:</label>
+            <label>New Initial Balance:</label>
             <input
               type="number"
               step="0.01"
@@ -2277,12 +2276,11 @@
               required
             />
             <small style="color: #94a3b8">
-              Esto solo cambia tu punto de partida, no afecta ingresos ni gastos
-              registrados.
+              This only changes your starting point, it doesn't affect recorded income or expenses.
             </small>
           </div>
 
-          <button type="submit" class="btn-submit">ACTUALIZAR</button>
+          <button type="submit" class="btn-submit">UPDATE</button>
         </form>
       </div>
     </div>
@@ -2291,11 +2289,11 @@
     <div id="modalVistaQuincenal" class="modal">
       <div class="modal-content" style="max-width: 600px">
         <span class="close-modal" onclick="cerrarVistaQuincenal()">&times;</span>
-        <h2>📊 Configurar Vista Quincenal</h2>
+        <h2>📊 Configure Biweekly View</h2>
 
         <p style="color: #94a3b8; margin-bottom: 20px;">
-          La vista quincenal te permite ver tu proyección financiera por quincenas en lugar de meses,
-          ideal si recibes tu nómina cada 15 días.
+          Biweekly view allows you to see your financial projection in two-week periods instead of months,
+          ideal if you receive your paycheck every 15 days.
         </p>
 
         <form action="/actualizar_vista_quincenal" method="POST">
@@ -2310,13 +2308,13 @@
                 onchange="toggleCamposQuincenales()"
                 style="width: auto; cursor: pointer;"
               />
-              <span style="font-weight: bold;">Activar vista quincenal</span>
+              <span style="font-weight: bold;">Activate biweekly view</span>
             </label>
           </div>
 
           <div id="camposQuincenales" style="{% if vista_quincenal != 1 %}display: none;{% endif %}">
             <div class="form-group">
-              <label>Primera fecha de pago del mes (día):</label>
+              <label>First payment date of the month (day):</label>
               <input
                 type="number"
                 name="fecha_pago_1"
@@ -2327,12 +2325,12 @@
                 required
               />
               <small style="color: #94a3b8">
-                Ejemplo: Si te pagan el día 10, ingresa 10
+                Example: If you get paid on day 10, enter 10
               </small>
             </div>
 
             <div class="form-group">
-              <label>Segunda fecha de pago del mes (día):</label>
+              <label>Second payment date of the month (day):</label>
               <input
                 type="number"
                 name="fecha_pago_2"
@@ -2343,21 +2341,21 @@
                 required
               />
               <small style="color: #94a3b8">
-                Ejemplo: Si te pagan el día 25, ingresa 25
+                Example: If you get paid on day 25, enter 25
               </small>
             </div>
 
             <div style="background: rgba(99, 102, 241, 0.1); padding: 15px; border-radius: 8px; border-left: 4px solid #6366f1;">
               <p style="margin: 0; color: #94a3b8; font-size: 0.9em;">
-                <strong>📌 Ejemplo:</strong><br>
-                Si tus fechas de pago son <strong>10</strong> y <strong>25</strong>:<br>
-                • Quincena 1: Del 26 al 10 (pago día 10)<br>
-                • Quincena 2: Del 11 al 25 (pago día 25)
+                <strong>📌 Example:</strong><br>
+                If your payment dates are <strong>10</strong> and <strong>25</strong>:<br>
+                • Period 1: From the 26th to the 10th (payment on day 10)<br>
+                • Period 2: From the 11th to the 25th (payment on day 25)
               </p>
             </div>
           </div>
 
-          <button type="submit" class="btn-submit">GUARDAR CONFIGURACIÓN</button>
+          <button type="submit" class="btn-submit">SAVE CONFIGURATION</button>
         </form>
       </div>
     </div>
@@ -2366,24 +2364,24 @@
     <div id="modalRegistroIngreso" class="modal">
       <div class="modal-content" style="max-width: 500px">
         <span class="close-modal" onclick="cerrarRegistroIngreso()">&times;</span>
-        <h2>💵 Registrar Ingreso</h2>
+        <h2>💵 Record Income</h2>
 
         <form action="/agregar_ingreso" method="POST">
           <!-- Campo oculto con fecha actual -->
           <input type="hidden" name="fecha" id="fecha-ingreso-actual" />
 
           <div class="form-group">
-            <label>Concepto:</label>
+            <label>Concept:</label>
             <input
               type="text"
               name="concepto"
-              placeholder="Venta, Regalo, Bono, etc."
+              placeholder="Sale, Gift, Bonus, etc."
               required
             />
           </div>
 
           <div class="form-group">
-            <label>Monto:</label>
+            <label>Amount:</label>
             <input
               type="number"
               step="0.01"
@@ -2394,9 +2392,9 @@
           </div>
 
           <div class="form-group">
-            <label>Categoría (opcional):</label>
+            <label>Category (optional):</label>
             <select name="categoria_id">
-              <option value="">Sin categoría</option>
+              <option value="">No category</option>
               {% for cat in categorias %}
               {% if cat['tipo'] == 'ingreso' %}
               <option value="{{ cat['id'] }}">{{ cat['nombre'] }}</option>
@@ -2405,7 +2403,7 @@
             </select>
           </div>
 
-          <button type="submit" class="btn-submit">REGISTRAR INGRESO</button>
+          <button type="submit" class="btn-submit">RECORD INCOME</button>
         </form>
       </div>
     </div>
@@ -2416,15 +2414,15 @@
         <span class="close-modal" onclick="cerrarIngresoRecurrente()"
           >&times;</span
         >
-        <h2>💰 Agregar Ingreso Recurrente</h2>
+        <h2>💰 Add Recurring Income</h2>
 
         <p style="color: #94a3b8; margin-bottom: 20px">
-          Configura ingresos que se repiten (nómina, aguinaldo, bonos, etc.). Se sumarán automáticamente en la proyección según su frecuencia.
+          Configure recurring income (payroll, bonuses, etc.). They will be automatically added to the projection based on their frequency.
         </p>
 
         <form action="/agregar_ingreso_recurrente" method="POST">
           <div class="form-group">
-            <label>Nombre:</label>
+            <label>Name:</label>
             <input
               type="text"
               name="nombre"
@@ -2437,7 +2435,7 @@
           </div>
 
           <div class="form-group">
-            <label>Monto:</label>
+            <label>Amount:</label>
             <input
               type="number"
               step="0.01"
@@ -2448,7 +2446,7 @@
           </div>
 
           <div class="form-group">
-            <label>Frecuencia:</label>
+            <label>Frequency:</label>
             <select name="frecuencia" id="frecuencia_select" onchange="toggleMesEspecifico()" required>
               <option value="semanal">📅 Semanal (cada semana)</option>
               <option value="quincenal">📆 Quincenal (cada 15 días)</option>
@@ -2509,7 +2507,7 @@
           </div>
 
           <button type="submit" class="btn-submit">
-            AGREGAR INGRESO RECURRENTE
+            ADD RECURRING INCOME
           </button>
         </form>
 
@@ -2538,9 +2536,9 @@
     <div id="modalHistorial" class="modal">
       <div class="modal-content" style="max-width: 95%; width: 1200px;">
         <span class="close-modal" onclick="cerrarHistorial()">&times;</span>
-        <h2>📋 Historial de Simulaciones</h2>
+        <h2>📋 Simulation History</h2>
         <p style="color: var(--text-secondary); margin-bottom: 20px;">
-          Aquí puedes ver tus simulaciones anteriores. Es útil para recordar qué compras consideraste y tomar mejores decisiones financieras.
+          Here you can see your previous simulations. It's useful to remember which purchases you considered and make better financial decisions.
         </p>
 
         {% if historial_simulaciones %}
@@ -2551,10 +2549,10 @@
                 <th style="padding: 12px; text-align: left; font-size: 0.9em;">Fecha</th>
                 <th style="padding: 12px; text-align: left; font-size: 0.9em;">Producto</th>
                 <th style="padding: 12px; text-align: right; font-size: 0.9em;">Precio</th>
-                <th style="padding: 12px; text-align: center; font-size: 0.9em;">Meses</th>
-                <th style="padding: 12px; text-align: right; font-size: 0.9em;">Mensualidad</th>
-                <th style="padding: 12px; text-align: center; font-size: 0.9em;">Veredicto</th>
-                <th style="padding: 12px; text-align: right; font-size: 0.9em;">Saldo Mínimo</th>
+                <th style="padding: 12px; text-align: center; font-size: 0.9em;">Months</th>
+                <th style="padding: 12px; text-align: right; font-size: 0.9em;">Monthly Payment</th>
+                <th style="padding: 12px; text-align: center; font-size: 0.9em;">Verdict</th>
+                <th style="padding: 12px; text-align: right; font-size: 0.9em;">Minimum Balance</th>
               </tr>
             </thead>
             <tbody>
