@@ -123,6 +123,38 @@ def home():
         c.execute('SELECT * FROM categorias WHERE usuario_id=? ORDER BY tipo, nombre', (usuario_id,))
         categorias = c.fetchall()
 
+        # Cashback entries
+        c.execute('''SELECT cb.*, tc.nombre as card_name, cat.nombre as category_name
+                     FROM cashback cb
+                     LEFT JOIN tarjetas_credito tc ON cb.card_id = tc.id
+                     LEFT JOIN categorias cat ON cb.category_id = cat.id
+                     WHERE cb.usuario_id=? AND cb.active=1
+                     ORDER BY cb.date_earned DESC
+                     LIMIT 20''', (usuario_id,))
+        cashback_list = c.fetchall()
+
+        # Cashback summary
+        c.execute('''SELECT
+                        COALESCE(SUM(CASE WHEN status='pending' THEN amount ELSE 0 END), 0) as pending,
+                        COALESCE(SUM(CASE WHEN status='received' THEN amount ELSE 0 END), 0) as received
+                     FROM cashback
+                     WHERE usuario_id=? AND active=1''', (usuario_id,))
+        cashback_summary = c.fetchone()
+
+        # Investments
+        c.execute('''SELECT * FROM investments
+                     WHERE usuario_id=? AND active=1
+                     ORDER BY start_date DESC''', (usuario_id,))
+        investments_list = c.fetchall()
+
+        # Investment summary
+        c.execute('''SELECT
+                        COALESCE(SUM(initial_amount), 0) as total_invested,
+                        COALESCE(SUM(current_value), 0) as current_value
+                     FROM investments
+                     WHERE usuario_id=? AND active=1''', (usuario_id,))
+        investment_summary = c.fetchone()
+
         # Real balance = Initial balance + Income - Expenses
         balance = balance_inicial + total_ingresos - total_gastos
 
@@ -164,7 +196,11 @@ def home():
                              fecha_pago_1=fecha_pago_1,
                              fecha_pago_2=fecha_pago_2,
                              alertas=alertas,
-                             categorias=categorias)
+                             categorias=categorias,
+                             cashback_list=cashback_list,
+                             cashback_summary=cashback_summary,
+                             investments_list=investments_list,
+                             investment_summary=investment_summary)
 
     except Exception as e:
         print(f"[ERROR] Error on main page: {str(e)}")

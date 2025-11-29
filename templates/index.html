@@ -1620,6 +1620,186 @@
         <p>No active interest-free purchases.</p>
         {% endif %}
       </div>
+
+      <!-- CASHBACK SECTION -->
+      <div class="section">
+        <h2>💰 Cashback Rewards</h2>
+
+        <!-- Cashback Summary Cards -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+          <div style="background: rgba(6, 78, 59, 0.3); border: 1px solid rgba(16, 185, 129, 0.5); border-radius: 10px; padding: 15px; text-align: center;">
+            <div style="font-size: 0.85em; color: var(--text-secondary); margin-bottom: 5px;">Received Cashback</div>
+            <div style="font-size: 1.8em; font-weight: bold; color: #d1fae5;">
+              ${{ "%.2f"|format(cashback_summary['received'] if cashback_summary else 0) }}
+            </div>
+          </div>
+          <div style="background: rgba(120, 53, 15, 0.3); border: 1px solid rgba(245, 158, 11, 0.5); border-radius: 10px; padding: 15px; text-align: center;">
+            <div style="font-size: 0.85em; color: var(--text-secondary); margin-bottom: 5px;">Pending Cashback</div>
+            <div style="font-size: 1.8em; font-weight: bold; color: #fef3c7;">
+              ${{ "%.2f"|format(cashback_summary['pending'] if cashback_summary else 0) }}
+            </div>
+          </div>
+        </div>
+
+        {% if cashback_list %}
+        <table>
+          <tr>
+            <th>Source</th>
+            <th>Card</th>
+            <th>Amount</th>
+            <th>Date Earned</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+          {% for cb in cashback_list %}
+          <tr>
+            <td>{{ cb['source'] }}</td>
+            <td>{{ cb['card_name'] if cb['card_name'] else 'N/A' }}</td>
+            <td style="font-weight: bold; color: #10b981;">${{ "%.2f"|format(cb['amount']) }}</td>
+            <td>{{ cb['date_earned'] }}</td>
+            <td>
+              {% if cb['status'] == 'pending' %}
+                <span style="background: rgba(245, 158, 11, 0.3); color: #fef3c7; padding: 3px 10px; border-radius: 5px; font-size: 0.85em;">
+                  ⏳ Pending
+                </span>
+              {% else %}
+                <span style="background: rgba(6, 78, 59, 0.3); color: #d1fae5; padding: 3px 10px; border-radius: 5px; font-size: 0.85em;">
+                  ✅ Received
+                </span>
+              {% endif %}
+            </td>
+            <td>
+              {% if cb['status'] == 'pending' %}
+              <button
+                onclick="markCashbackReceived({{ cb['id'] }})"
+                style="background: #10b981; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; margin-right: 5px;">
+                ✓ Mark Received
+              </button>
+              {% endif %}
+              <a
+                href="/delete_cashback/{{ cb['id'] }}"
+                style="color: #dc2626; text-decoration: none; padding: 5px 10px;"
+                onclick="return confirm('Delete this cashback entry?')"
+              >
+                🗑️ Delete
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </table>
+        {% else %}
+        <p>No cashback entries recorded yet.</p>
+        {% endif %}
+
+        <button
+          onclick="abrirCashback()"
+          style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; margin-top: 15px; font-weight: 600;"
+        >
+          ➕ Add Cashback
+        </button>
+      </div>
+
+      <!-- INVESTMENTS SECTION -->
+      <div class="section">
+        <h2>📈 Investments</h2>
+
+        <!-- Investment Summary Cards -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+          <div style="background: rgba(37, 99, 235, 0.2); border: 1px solid rgba(59, 130, 246, 0.5); border-radius: 10px; padding: 15px; text-align: center;">
+            <div style="font-size: 0.85em; color: var(--text-secondary); margin-bottom: 5px;">Total Invested</div>
+            <div style="font-size: 1.8em; font-weight: bold; color: #93c5fd;">
+              ${{ "%.2f"|format(investment_summary['total_invested'] if investment_summary else 0) }}
+            </div>
+          </div>
+          <div style="background: rgba(6, 78, 59, 0.3); border: 1px solid rgba(16, 185, 129, 0.5); border-radius: 10px; padding: 15px; text-align: center;">
+            <div style="font-size: 0.85em; color: var(--text-secondary); margin-bottom: 5px;">Current Value</div>
+            <div style="font-size: 1.8em; font-weight: bold; color: #d1fae5;">
+              ${{ "%.2f"|format(investment_summary['current_value'] if investment_summary else 0) }}
+            </div>
+          </div>
+          <div style="background: {% if investment_summary and investment_summary['current_value'] >= investment_summary['total_invested'] %}rgba(6, 78, 59, 0.3){% else %}rgba(127, 29, 29, 0.3){% endif %}; border: 1px solid {% if investment_summary and investment_summary['current_value'] >= investment_summary['total_invested'] %}rgba(16, 185, 129, 0.5){% else %}rgba(239, 68, 68, 0.5){% endif %}; border-radius: 10px; padding: 15px; text-align: center;">
+            <div style="font-size: 0.85em; color: var(--text-secondary); margin-bottom: 5px;">Total Returns</div>
+            <div style="font-size: 1.8em; font-weight: bold; color: {% if investment_summary and investment_summary['current_value'] >= investment_summary['total_invested'] %}#d1fae5{% else %}#fecaca{% endif %};">
+              {% if investment_summary %}
+                {% set returns = investment_summary['current_value'] - investment_summary['total_invested'] %}
+                {{ "+" if returns >= 0 else "" }}${{ "%.2f"|format(returns) }}
+              {% else %}
+                $0.00
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        {% if investments_list %}
+        <table>
+          <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Initial Amount</th>
+            <th>Current Value</th>
+            <th>Return</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+          {% for inv in investments_list %}
+          <tr>
+            <td><strong>{{ inv['name'] }}</strong></td>
+            <td>{{ inv['investment_type'] }}</td>
+            <td>${{ "%.2f"|format(inv['initial_amount']) }}</td>
+            <td style="font-weight: bold; color: #10b981;">${{ "%.2f"|format(inv['current_value']) }}</td>
+            <td style="font-weight: bold; color: {% if inv['current_value'] >= inv['initial_amount'] %}#10b981{% else %}#dc2626{% endif %};">
+              {% set return_amount = inv['current_value'] - inv['initial_amount'] %}
+              {{ "+" if return_amount >= 0 else "" }}${{ "%.2f"|format(return_amount) }}
+              {% if inv['initial_amount'] > 0 %}
+                ({{ "+%.1f"|format((return_amount / inv['initial_amount']) * 100) if return_amount >= 0 else "%.1f"|format((return_amount / inv['initial_amount']) * 100) }}%)
+              {% endif %}
+            </td>
+            <td>
+              {% if inv['status'] == 'active' %}
+                <span style="background: rgba(6, 78, 59, 0.3); color: #d1fae5; padding: 3px 10px; border-radius: 5px; font-size: 0.85em;">
+                  ✓ Active
+                </span>
+              {% else %}
+                <span style="background: rgba(71, 85, 105, 0.3); color: var(--text-secondary); padding: 3px 10px; border-radius: 5px; font-size: 0.85em;">
+                  ● {{ inv['status'].title() }}
+                </span>
+              {% endif %}
+            </td>
+            <td>
+              <button
+                onclick="abrirInvestmentTransaction({{ inv['id'] }}, '{{ inv['name'] }}')"
+                style="background: #3b82f6; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; margin-right: 5px; font-size: 0.85em;">
+                💵 Transaction
+              </button>
+              <a
+                href="/deactivate_investment/{{ inv['id'] }}"
+                style="color: #f59e0b; text-decoration: none; padding: 5px 10px; font-size: 0.85em;"
+                onclick="return confirm('Mark this investment as completed?')"
+              >
+                ⏸️ Complete
+              </a>
+              <a
+                href="/delete_investment/{{ inv['id'] }}"
+                style="color: #dc2626; text-decoration: none; padding: 5px 10px; font-size: 0.85em;"
+                onclick="return confirm('Delete this investment?')"
+              >
+                🗑️ Delete
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </table>
+        {% else %}
+        <p>No investments registered yet.</p>
+        {% endif %}
+
+        <button
+          onclick="abrirInvestment()"
+          style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; margin-top: 15px; font-weight: 600;"
+        >
+          ➕ Add Investment
+        </button>
+      </div>
     </div>
 
     <!-- BOTÓN HISTORIAL DE SIMULACIONES -->
@@ -2621,6 +2801,189 @@
       </div>
     </div>
 
+    <!-- MODAL ADD CASHBACK -->
+    <div id="modalCashback" class="modal">
+      <div class="modal-content">
+        <span class="close-modal" onclick="cerrarCashback()">&times;</span>
+        <h2>💰 Add Cashback</h2>
+        <form action="/add_cashback" method="POST">
+          <div class="form-group">
+            <label>Source:</label>
+            <input type="text" name="source" placeholder="Amazon, Walmart, Uber..." required />
+          </div>
+
+          <div class="form-group">
+            <label>Amount:</label>
+            <input type="number" name="amount" step="0.01" placeholder="25.00" required />
+          </div>
+
+          <div class="form-group">
+            <label>Date Earned:</label>
+            <input type="date" name="date_earned" required />
+          </div>
+
+          <div class="form-group">
+            <label>Card (Optional):</label>
+            <select name="card_id">
+              <option value="">No card</option>
+              {% for tarjeta in tarjetas %}
+              <option value="{{ tarjeta['id'] }}">{{ tarjeta['nombre'] }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Category (Optional):</label>
+            <select name="category_id">
+              <option value="">No category</option>
+              {% for cat in categorias %}
+              <option value="{{ cat['id'] }}">{{ cat['nombre'] }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Status:</label>
+            <select name="status">
+              <option value="pending">Pending</option>
+              <option value="received">Received</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Date Received (if already received):</label>
+            <input type="date" name="date_received" />
+          </div>
+
+          <div class="form-group">
+            <label>Notes (Optional):</label>
+            <textarea name="notes" rows="2" placeholder="Additional information..."></textarea>
+          </div>
+
+          <button type="submit" class="btn-submit">💰 Add Cashback</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL MARK CASHBACK RECEIVED -->
+    <div id="modalMarkReceived" class="modal">
+      <div class="modal-content" style="max-width: 400px;">
+        <span class="close-modal" onclick="cerrarMarkReceived()">&times;</span>
+        <h2>✅ Mark Cashback Received</h2>
+        <form id="formMarkReceived" method="POST">
+          <div class="form-group">
+            <label>Date Received:</label>
+            <input type="date" name="date_received" id="dateReceivedInput" required />
+          </div>
+          <input type="hidden" name="status" value="received" />
+          <button type="submit" class="btn-submit">✓ Confirm</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL ADD INVESTMENT -->
+    <div id="modalInvestment" class="modal">
+      <div class="modal-content">
+        <span class="close-modal" onclick="cerrarInvestment()">&times;</span>
+        <h2>📈 Add Investment</h2>
+        <form action="/add_investment" method="POST">
+          <div class="form-group">
+            <label>Investment Name:</label>
+            <input type="text" name="name" placeholder="e.g., AAPL Stocks, Bitcoin, Real Estate..." required />
+          </div>
+
+          <div class="form-group">
+            <label>Investment Type:</label>
+            <select name="investment_type" required>
+              <option value="">Select type...</option>
+              <option value="Stocks">Stocks</option>
+              <option value="Bonds">Bonds</option>
+              <option value="Crypto">Cryptocurrency</option>
+              <option value="Real Estate">Real Estate</option>
+              <option value="ETF">ETF</option>
+              <option value="Mutual Funds">Mutual Funds</option>
+              <option value="Savings Account">Savings Account</option>
+              <option value="CD">Certificate of Deposit (CD)</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Initial Amount:</label>
+            <input type="number" name="initial_amount" step="0.01" placeholder="1000.00" required />
+          </div>
+
+          <div class="form-group">
+            <label>Current Value (optional, defaults to initial amount):</label>
+            <input type="number" name="current_value" step="0.01" placeholder="1050.00" />
+          </div>
+
+          <div class="form-group">
+            <label>Start Date:</label>
+            <input type="date" name="start_date" required />
+          </div>
+
+          <div class="form-group">
+            <label>Expected Annual Return Rate (%):</label>
+            <input type="number" name="expected_return_rate" step="0.01" placeholder="8.5" />
+            <small style="color: var(--text-secondary); font-size: 0.85em;">Optional: Enter expected annual return percentage</small>
+          </div>
+
+          <div class="form-group">
+            <label>Maturity Date (optional):</label>
+            <input type="date" name="maturity_date" />
+          </div>
+
+          <div class="form-group">
+            <label>Platform/Broker (optional):</label>
+            <input type="text" name="platform" placeholder="e.g., Robinhood, Fidelity, Binance..." />
+          </div>
+
+          <div class="form-group">
+            <label>Notes (optional):</label>
+            <textarea name="notes" rows="2" placeholder="Additional information..."></textarea>
+          </div>
+
+          <button type="submit" class="btn-submit">📈 Add Investment</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL ADD INVESTMENT TRANSACTION -->
+    <div id="modalInvestmentTransaction" class="modal">
+      <div class="modal-content" style="max-width: 500px;">
+        <span class="close-modal" onclick="cerrarInvestmentTransaction()">&times;</span>
+        <h2 id="investmentTransactionTitle">💵 Add Transaction</h2>
+        <form id="formInvestmentTransaction" method="POST">
+          <div class="form-group">
+            <label>Transaction Type:</label>
+            <select name="transaction_type" required>
+              <option value="deposit">Deposit (Add funds)</option>
+              <option value="withdrawal">Withdrawal (Remove funds)</option>
+              <option value="return">Return/Profit</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Amount:</label>
+            <input type="number" name="amount" step="0.01" placeholder="100.00" required />
+          </div>
+
+          <div class="form-group">
+            <label>Transaction Date:</label>
+            <input type="date" name="transaction_date" required />
+          </div>
+
+          <div class="form-group">
+            <label>Notes (optional):</label>
+            <textarea name="notes" rows="2" placeholder="e.g., Monthly contribution, Dividend payment..."></textarea>
+          </div>
+
+          <button type="submit" class="btn-submit">💵 Record Transaction</button>
+        </form>
+      </div>
+    </div>
+
     <script>
       // ========== FILTRO DE PERIODO ==========
       let periodoActual = 'todo'; // 'todo' o 'mes'
@@ -2717,6 +3080,62 @@
 
       function cerrarHistorial() {
         document.getElementById("modalHistorial").style.display = "none";
+      }
+
+      // ========== CASHBACK FUNCTIONS ==========
+      function abrirCashback() {
+        document.getElementById("modalCashback").style.display = "block";
+      }
+
+      function cerrarCashback() {
+        document.getElementById("modalCashback").style.display = "none";
+      }
+
+      function markCashbackReceived(cashbackId) {
+        // Set today's date as default
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('dateReceivedInput').value = today;
+
+        // Set form action
+        document.getElementById('formMarkReceived').action = `/update_cashback_status/${cashbackId}`;
+
+        // Open modal
+        document.getElementById("modalMarkReceived").style.display = "block";
+      }
+
+      function cerrarMarkReceived() {
+        document.getElementById("modalMarkReceived").style.display = "none";
+      }
+
+      // ========== INVESTMENT FUNCTIONS ==========
+      function abrirInvestment() {
+        document.getElementById("modalInvestment").style.display = "block";
+      }
+
+      function cerrarInvestment() {
+        document.getElementById("modalInvestment").style.display = "none";
+      }
+
+      function abrirInvestmentTransaction(investmentId, investmentName) {
+        // Set form action
+        document.getElementById('formInvestmentTransaction').action = `/add_investment_transaction/${investmentId}`;
+
+        // Update title
+        document.getElementById('investmentTransactionTitle').textContent = `💵 Add Transaction - ${investmentName}`;
+
+        // Set today's date as default
+        const today = new Date().toISOString().split('T')[0];
+        const dateInput = document.querySelector('#formInvestmentTransaction input[name="transaction_date"]');
+        if (dateInput) {
+          dateInput.value = today;
+        }
+
+        // Open modal
+        document.getElementById("modalInvestmentTransaction").style.display = "block";
+      }
+
+      function cerrarInvestmentTransaction() {
+        document.getElementById("modalInvestmentTransaction").style.display = "none";
       }
     </script>
 
